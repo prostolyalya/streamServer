@@ -15,19 +15,24 @@ set(SRC_LIST
     "sources/server.cpp"
     "sources/client_manager.cpp"
     "sources/client.cpp"
+    "sources/receiver.cpp"
+    "sources/sender.cpp"
+    "sources/connector.cpp"
 )
 set(HDRS_LIST
     "include/headers/server.h"
     "include/headers/thread_pool.h"
     "include/headers/client_manager.h"
     "include/headers/client.h"
+    "include/headers/sender.h"
+    "include/headers/receiver.h"
+    "include/headers/connector.h"
 )
-find_package(Qt5Core)
-
+find_package(Qt5 COMPONENTS Core Network REQUIRED)
 add_executable(streamServer
   main.cpp
   ${SRC_LIST}
   ${HDRS_LIST}
 )
-target_link_libraries(streamServer Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(streamServer Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
 target_include_directories(streamServer PUBLIC include)

@@ -1,12 +1,18 @@
 #ifndef CLIENTMANAGER_H
 #define CLIENTMANAGER_H
 #pragma once
-#include <map>
 #include <string>
+#include <QtNetwork>
+#include <vector>
 #include "client.h"
+
 class ClientManager
 {
+public:
+
+    void createClient(QTcpSocket &socket);
 private:
-    std::map<std::string, Client> clients;
+
+    std::vector<std::unique_ptr<Client>> clients;
 };
 #endif // CLIENTMANAGER_H

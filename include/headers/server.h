@@ -4,13 +4,16 @@
 
 #include "thread_pool.h"
 #include "client_manager.h"
+#include "connector.h"
+
 class Server
 {
+public:
     Server();
 private:
-    ThreadPool* threadPool = nullptr;
-    ClientManager* clientManager = nullptr;
-
+//    std::shared_ptr<ThreadPool> threadPool;
+    std::shared_ptr<ClientManager> clientManager;
+    std::unique_ptr<Connector> connector;
 };
 
 #endif // SERVER_H
