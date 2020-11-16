@@ -28,5 +28,16 @@
 
 # Executables
 *.exe
+*.txt.user
 *.out
 *.app
+# other
+*.check_cache
+*.cmake
+*.bin
+*.json
+*.h.autosave
+/build/CMakeFiles/TargetDirectories.txt
+*.log
+/build/CMakeCache.txt
+/build/CMakeFiles/3.18.2/CompilerIdCXX/CMakeCXXCompilerId.cpp
