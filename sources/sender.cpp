@@ -8,6 +8,7 @@ Sender::Sender(QObject *parent)
     socket->connectToHost(QHostAddress::LocalHost, 6000);
     if(socket->waitForConnected())
         qDebug() << "Connected to Server";
+    socket->write("Hello from client");
 }
 
 void Sender::readSocket()

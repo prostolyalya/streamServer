@@ -4,6 +4,5 @@
 
 class Receiver
 {
-
 };
 #endif // RECEIVER_H

@@ -11,6 +11,7 @@ public:
 public slots:
     void readSocket();
     void discardSocket();
+
 private:
     std::unique_ptr<QTcpSocket> socket;
 };

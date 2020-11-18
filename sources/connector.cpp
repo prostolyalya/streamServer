@@ -1,13 +1,14 @@
 #include "headers/connector.h"
 #include <QCoreApplication>
 
-Connector::Connector(std::shared_ptr<ClientManager> &_clientManager, QObject *parent)
-   : QObject(parent)
+Connector::Connector(std::shared_ptr<ClientManager> _clientManager, QObject *parent)
+    : QObject(parent)
+    , clientManager(_clientManager)
 {
-    clientManager = _clientManager;
     server = std::make_unique<QTcpServer>(this);
 
-    connect(server.get(), &QTcpServer::newConnection, this, &Connector::slotNewConnection);
+    connect(server.get(), &QTcpServer::newConnection, this,
+            &Connector::slotNewConnection);
 
     if (!server->listen(QHostAddress::Any, 6000))
     {
@@ -22,6 +23,5 @@ Connector::Connector(std::shared_ptr<ClientManager> &_clientManager, QObject *pa
 void Connector::slotNewConnection()
 {
     auto socket = server->nextPendingConnection();
-    socket->write("server: 1");
     clientManager->createClient(*socket);
 }

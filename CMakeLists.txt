@@ -4,12 +4,17 @@ project(streamServer LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+#set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/headers
     ${CMAKE_CURRENT_SOURCE_DIR}/sources
 )
+
 set(SRC_LIST
     "sources/thread_pool.cpp"
     "sources/server.cpp"
@@ -18,6 +23,8 @@ set(SRC_LIST
     "sources/receiver.cpp"
     "sources/sender.cpp"
     "sources/connector.cpp"
+    "sources/ui_controller.cpp"
+    "sources/stream_client.cpp"
 )
 set(HDRS_LIST
     "include/headers/server.h"
@@ -27,12 +34,17 @@ set(HDRS_LIST
     "include/headers/sender.h"
     "include/headers/receiver.h"
     "include/headers/connector.h"
+    "include/headers/stream_client.h"
+    "include/headers/ui_controller.h"
+    "qml.qrc"
 )
-find_package(Qt5 COMPONENTS Core Network REQUIRED)
+find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets REQUIRED)
 add_executable(streamServer
   main.cpp
   ${SRC_LIST}
   ${HDRS_LIST}
 )
-target_link_libraries(streamServer Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
+target_compile_definitions(streamServer
+  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+target_link_libraries(streamServer Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets)
 target_include_directories(streamServer PUBLIC include)

@@ -8,7 +8,7 @@ class Connector : public QObject
 {
 //    Q_OBJECT
 public:
-    explicit Connector(std::shared_ptr<ClientManager> &_clientManager, QObject *parent = 0);
+    explicit Connector(std::shared_ptr<ClientManager> _clientManager, QObject *parent = 0);
     std::unique_ptr<QTcpServer> server;
 
 public slots:

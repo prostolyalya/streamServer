@@ -6,6 +6,7 @@
 class ThreadPool
 {
     ThreadPool();
+
 public:
     bool addToThread();
 

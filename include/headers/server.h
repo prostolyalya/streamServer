@@ -3,17 +3,22 @@
 #pragma once
 
 #include "thread_pool.h"
-#include "client_manager.h"
 #include "connector.h"
+#include "ui_controller.h"
 
 class Server
 {
 public:
     Server();
+
+    std::shared_ptr<UiController> getUiController() const;
+
 private:
-//    std::shared_ptr<ThreadPool> threadPool;
+    //    std::shared_ptr<ThreadPool> threadPool;
+    //    QQmlE
     std::shared_ptr<ClientManager> clientManager;
     std::unique_ptr<Connector> connector;
+    std::shared_ptr<UiController> uiController;
 };
 
 #endif // SERVER_H

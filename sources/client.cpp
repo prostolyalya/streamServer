@@ -1,25 +1,32 @@
 #include "client.h"
 
-Client::Client(QTcpSocket &_socket, QObject *parent): socket(_socket), QObject(parent)
+Client::Client(QTcpSocket &_socket, QObject *parent)
+    : QObject(parent),
+      socket(_socket)
 {
     connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead);
     connect(&socket, &QTcpSocket::disconnected, this, &Client::slotClientDisconnected);
     qDebug() << socket.state();
-    socket.write("Connected\n");
+    if(socket.state() == QAbstractSocket::ConnectedState)
+        qDebug() << "Connected to server";
+    sendMessage("Hello from server");
+}
+
+void Client::sendMessage(QString text)
+{
+    socket.write(text.toUtf8());
 }
 
 void Client::slotRead()
 {
-    while(socket.bytesAvailable() > 0)
+    while (socket.bytesAvailable() > 0)
     {
         QByteArray array = socket.readAll();
-
-        socket.write("server: " + array);
+        qDebug() << array;
     }
 }
 
 void Client::slotClientDisconnected()
 {
-    qDebug() << "socket closed";
     socket.close();
 }
