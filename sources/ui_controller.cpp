@@ -9,18 +9,18 @@ UiController::~UiController()
 {
 }
 
-void UiController::addTextServer(QString text)
+void UiController::addText(QString text)
 {
     textServer += text + '\n';
     emit textServerChanged();
 }
 
-QString UiController::getTextServer() const
+QString UiController::getText() const
 {
     return textServer;
 }
 
-void UiController::setTextServer(const QString &value)
+void UiController::setText(const QString &value)
 {
     textServer = value;
 }

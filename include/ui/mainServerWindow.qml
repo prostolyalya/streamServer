@@ -22,6 +22,33 @@ ApplicationWindow
         id: mainTextArea
         width: 300
         height: 200
-        text: uiController.uiTextServer
+        text: uiController.uiText
+    }
+
+    TextArea
+    {
+        anchors.top: mainTextArea.bottom
+        anchors.left: mainTextArea.left
+        anchors.topMargin: 20
+        id: mainInput
+        width: 300
+        height: 200
+    }
+    Rectangle
+    {
+       anchors.top: mainInput.top
+       anchors.left: mainInput.right
+       width: 50
+       height: 20
+       Text {
+           anchors.fill: parent
+           text: qsTr("Send")
+       }
+       anchors.rightMargin: 10
+       MouseArea
+       {
+            anchors.fill: parent
+            onClicked: uiController.sendTextAllUsers(mainInput.text)
+       }
     }
 }

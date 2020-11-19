@@ -7,18 +7,19 @@
 class UiController : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString uiTextServer READ getTextServer WRITE setTextServer NOTIFY textServerChanged)
+    Q_PROPERTY(QString uiText READ getText WRITE setText NOTIFY textServerChanged)
 public:
     UiController(QObject* parent = nullptr);
     ~UiController();
-    void addTextServer(QString text);
-    QString getTextServer() const;
+    void addText(QString text);
+    QString getText() const;
 
-    void setTextServer(const QString &value);
+    void setText(const QString &value);
 
 signals:
     void textServerChanged();
-
+    void sendTextAllUsers(QString text);
+    void sendText(QString text);
 private:
     QString textServer;
 };

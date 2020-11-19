@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "server.h"
-#include "sender.h"
+#include "stream_client.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,10 +14,11 @@ int main(int argc, char *argv[])
     // create server
 //    const QUrl url(QStringLiteral("qrc:/include/ui/mainServerWindow.qml"));
 //    auto server = std::make_unique<Server>();
-//        engine.rootContext()->setContextProperty("uiController", server.get()->getUiController().get());
+//    engine.rootContext()->setContextProperty("uiController", server.get()->getUiController().get());
     // create client
-        const QUrl url(QStringLiteral("qrc:/include/ui/mainClientWindow.qml"));
-        auto client = std::make_unique<Sender>();
+    const QUrl url(QStringLiteral("qrc:/include/ui/mainClientWindow.qml"));
+    auto client = std::make_unique<StreamClient>();
+    engine.rootContext()->setContextProperty("uiController", client.get()->getUiController().get());
 
     engine.load(url);
 

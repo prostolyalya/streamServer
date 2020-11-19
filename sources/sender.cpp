@@ -11,6 +11,11 @@ Sender::Sender(QObject *parent)
     socket->write("Hello from client");
 }
 
+Sender::~Sender()
+{
+    socket->close();
+}
+
 void Sender::readSocket()
 {
     if(socket->bytesAvailable() > 0)

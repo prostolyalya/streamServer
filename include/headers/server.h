@@ -15,7 +15,6 @@ public:
 
 private:
     //    std::shared_ptr<ThreadPool> threadPool;
-    //    QQmlE
     std::shared_ptr<ClientManager> clientManager;
     std::unique_ptr<Connector> connector;
     std::shared_ptr<UiController> uiController;

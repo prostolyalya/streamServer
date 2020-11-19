@@ -7,7 +7,7 @@ class Sender : public QObject
 {
 public:
     Sender(QObject *parent = nullptr);
-
+    ~Sender();
 public slots:
     void readSocket();
     void discardSocket();
