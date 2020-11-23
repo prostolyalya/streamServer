@@ -25,6 +25,7 @@ set(SRC_LIST
     "sources/connector.cpp"
     "sources/ui_controller.cpp"
     "sources/stream_client.cpp"
+    "sources/db_connector.cpp"
 )
 set(HDRS_LIST
     "include/headers/server.h"
@@ -36,9 +37,10 @@ set(HDRS_LIST
     "include/headers/connector.h"
     "include/headers/stream_client.h"
     "include/headers/ui_controller.h"
+    "include/headers/db_connector.h"
     "qml.qrc"
 )
-find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
 add_executable(streamServer
   main.cpp
   ${SRC_LIST}
@@ -46,5 +48,5 @@ add_executable(streamServer
 )
 target_compile_definitions(streamServer
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(streamServer Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets)
+target_link_libraries(streamServer Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets Qt::Sql)
 target_include_directories(streamServer PUBLIC include)
