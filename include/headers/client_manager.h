@@ -7,6 +7,7 @@
 #include <QObject>
 #include "client.h"
 #include "ui_controller.h"
+#include "db_connector.h"
 class ClientManager : public QObject
 {
     Q_OBJECT
@@ -21,6 +22,7 @@ public slots:
 private:
     std::shared_ptr<UiController> uiController;
     std::map<int, std::unique_ptr<Client>> clients;
+    std::unique_ptr<DBConnector> DB;
     int count_clients = 1;
 };
 #endif // CLIENTMANAGER_H
