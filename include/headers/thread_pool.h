@@ -1,8 +1,10 @@
 #ifndef THREAD_POOL_H
 #define THREAD_POOL_H
 #pragma once
+
 #include <vector>
 #include <thread>
+
 class ThreadPool
 {
     ThreadPool();

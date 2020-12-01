@@ -49,7 +49,12 @@ ApplicationWindow
        MouseArea
        {
             anchors.fill: parent
-            onClicked: uiController.sendText(mainInput.text)
+            onClicked:
+            {
+                uiController.sendText(mainInput.text)
+                mainInput.text = ""
+            }
+
        }
     }
 

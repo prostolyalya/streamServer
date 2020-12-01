@@ -1,5 +1,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+#pragma once
 
 #include <QtNetwork>
 #include <QObject>
@@ -16,6 +17,7 @@ public:
 private:
     QTcpSocket& socket;
     int id = 0;
+
 public:
 public slots:
     void slotRead();

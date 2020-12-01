@@ -4,7 +4,6 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 
-
 ApplicationWindow
 {
     function checkLogin()
@@ -28,7 +27,6 @@ ApplicationWindow
     background: Rectangle {
          color: "gray"
     }
-
 
     Rectangle
     {
@@ -106,6 +104,7 @@ ApplicationWindow
          }
          Text
          {
+             id: textLoginLabel
              anchors.right: textLogin.left
              anchors.rightMargin: 10
              anchors.top: textLogin.top
@@ -118,7 +117,6 @@ ApplicationWindow
          TextField
          {
              id: textLogin
-//             textColor: "black"
              anchors.left: parent.left
              anchors.top: parent.top
              anchors.leftMargin: 80
@@ -129,10 +127,8 @@ ApplicationWindow
          }
          Text
          {
-             anchors.right: textPass.left
-             anchors.rightMargin: 10
+             anchors.left: textLoginLabel.left
              anchors.top: textPass.top
-             anchors.topMargin: 5
              font.family: "Helvetica"
              font.pointSize: 10
              color: "white"
@@ -159,8 +155,8 @@ ApplicationWindow
              anchors.left: textPass.left
              anchors.topMargin: 30
              color: "gray"
-             width: 50
-             height: 20
+             width: 55
+             height: 22
              Text
              {
                  anchors.centerIn: parent
@@ -178,8 +174,12 @@ ApplicationWindow
                      }
                      else
                      {
-                        console.log("clicked!")
-                        console.log(textPass.text + " " + textLogin.text)
+                        if (type === "Server")
+                            Starter.startServer(textLogin.text , textPass.text)
+                        else
+                            Starter.startClient(textLogin.text , textPass.text)
+                        logPassWindow.close()
+                        startWindow.close()
                      }
 
                  }

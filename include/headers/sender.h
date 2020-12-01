@@ -1,8 +1,10 @@
 #ifndef SENDER_H
 #define SENDER_H
 #pragma once
+
 #include <QtNetwork>
 #include <QObject>
+
 class Sender : public QObject
 {
 public:

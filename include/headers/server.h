@@ -13,6 +13,7 @@ public:
 
     std::shared_ptr<UiController> getUiController() const;
 
+    static bool checkLogin(QString username, QString password);
 private:
     //    std::shared_ptr<ThreadPool> threadPool;
     std::shared_ptr<ClientManager> clientManager;

@@ -1,6 +1,7 @@
 #ifndef UI_CONTROLLER_H
 #define UI_CONTROLLER_H
 #pragma once
+
 #include <QObject>
 #include <qqml.h>
 
@@ -14,12 +15,13 @@ public:
     void addText(QString text);
     QString getText() const;
 
-    void setText(const QString &value);
+    void setText(const QString& value);
 
 signals:
     void textServerChanged();
     void sendTextAllUsers(QString text);
     void sendText(QString text);
+
 private:
     QString textServer;
 };

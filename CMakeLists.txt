@@ -26,6 +26,9 @@ set(SRC_LIST
     "sources/ui_controller.cpp"
     "sources/stream_client.cpp"
     "sources/db_connector.cpp"
+    "sources/starter.cpp"
+    "sources/cryptor.cpp"
+    "sources/serializer.cpp"
 )
 set(HDRS_LIST
     "include/headers/server.h"
@@ -38,6 +41,9 @@ set(HDRS_LIST
     "include/headers/stream_client.h"
     "include/headers/ui_controller.h"
     "include/headers/db_connector.h"
+    "include/headers/starter.h"
+    "include/headers/cryptor.h"
+    "include/headers/serializer.h"
     "qml.qrc"
 )
 find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)

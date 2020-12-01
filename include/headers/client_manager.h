@@ -1,5 +1,6 @@
 #ifndef CLIENTMANAGER_H
 #define CLIENTMANAGER_H
+#pragma once
 
 #include <string>
 #include <QtNetwork>
@@ -8,6 +9,7 @@
 #include "client.h"
 #include "ui_controller.h"
 #include "db_connector.h"
+
 class ClientManager : public QObject
 {
     Q_OBJECT
@@ -19,6 +21,7 @@ public slots:
     void clientDisconnected(int id);
     void sendMessageToClients(QString text);
     void receiveMessage(QByteArray msg);
+
 private:
     std::shared_ptr<UiController> uiController;
     std::map<int, std::unique_ptr<Client>> clients;

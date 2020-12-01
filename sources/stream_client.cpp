@@ -29,6 +29,11 @@ std::shared_ptr<UiController> StreamClient::getUiController() const
     return uiController;
 }
 
+bool StreamClient::checkClient(QString username, QString password)
+{
+    return true;
+}
+
 void StreamClient::sendText(QString text)
 {
     client.get()->sendMessage(text);

@@ -1,8 +1,6 @@
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include "server.h"
-#include "stream_client.h"
+
+#include "starter.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,17 +9,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    // create server
-    //    const QUrl url(QStringLiteral("qrc:/include/ui/mainServerWindow.qml"));
-    //    auto server = std::make_unique<Server>();
-    //    engine.rootContext()->setContextProperty("uiController", server.get()->getUiController().get());
-    // create client
-    //    const QUrl url(QStringLiteral("qrc:/include/ui/mainClientWindow.qml"));
-    //    auto client = std::make_unique<StreamClient>();
-    //    engine.rootContext()->setContextProperty("uiController", client.get()->getUiController().get());
+    auto st = std::make_unique<Starter>(engine);
+    engine.rootContext()->setContextProperty("Starter", st.get());
     const QUrl url(QStringLiteral("qrc:/include/ui/startWindow.qml"));
     engine.load(url);
-
     return app.exec();
 }
 

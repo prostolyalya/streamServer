@@ -37,9 +37,9 @@ void Client::slotRead()
     {
         QByteArray array = socket.readAll();
         qDebug() << array;
-        emit messageReceived("From " + QByteArray::number(id) + ": " + array);
+        emit messageReceived("From " + (id == 0 ? "server" : QByteArray::number(id))
+                             + ": " + array);
     }
-
 }
 
 void Client::slotClientDisconnected()
