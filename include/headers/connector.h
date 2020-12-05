@@ -12,12 +12,23 @@ class Connector : public QObject
 public:
     explicit Connector(std::shared_ptr<ClientManager> _clientManager,
                        QObject *parent = 0);
-    std::unique_ptr<QTcpServer> server;
-
+    std::unique_ptr<QTcpServer> serverClients;
+    std::unique_ptr<QTcpServer> serverReceiver;
+    std::unique_ptr<QTcpServer> serverSender;
 public slots:
-    void slotNewConnection();
-
+    void slotNewConnectionClient();
+    void slotNewConnectionReceiver();
+    void slotNewConnectionSender();
 private:
+    void checkClient();
+
+    enum class typeSocket
+    {
+        CLIENT,
+        SENDER,
+        RECEIVER
+    };
+    QMultiHash<QHostAddress, std::pair<QTcpSocket&, typeSocket>> mapSockets;
     std::shared_ptr<ClientManager> clientManager;
 };
 #endif // CONNECTOR_H

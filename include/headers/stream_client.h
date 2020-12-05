@@ -21,6 +21,8 @@ public slots:
 
 private:
     std::unique_ptr<QTcpSocket> socket;
+    std::unique_ptr<QTcpSocket> socketSender;
+    std::unique_ptr<QTcpSocket> socketReceiver;
     std::unique_ptr<Client> client;
     std::shared_ptr<UiController> uiController;
 };

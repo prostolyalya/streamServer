@@ -8,12 +8,13 @@ ClientManager::ClientManager(std::shared_ptr<UiController> ui, QObject *parent)
     DB = std::make_unique<DBConnector>("clients");
 }
 
-void ClientManager::createClient(QTcpSocket& socket)
+void ClientManager::createClient(QTcpSocket& socketClient, QTcpSocket &socketSender, QTcpSocket &socketReceiver)
 {
 //    check log/pass
-    auto client = std::make_unique<Client>(socket, count_clients);
+    auto client = std::make_unique<Client>(socketClient, socketSender, socketReceiver, count_clients);
     connect(client.get(), &Client::clientDisconnect, this, &ClientManager::clientDisconnected);
     connect(client.get(), &Client::messageReceived, this, &ClientManager::receiveMessage);
+    connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile);
     clients.insert(std::make_pair(count_clients, std::move(client)));
     QString num = QString::number(count_clients);
     uiController.get()->addText(num + " client connected");

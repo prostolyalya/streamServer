@@ -1,27 +1,103 @@
 #include "headers/connector.h"
 #include <QCoreApplication>
-
+#include <set>
 Connector::Connector(std::shared_ptr<ClientManager> _clientManager, QObject *parent)
     : QObject(parent)
     , clientManager(_clientManager)
 {
-    server = std::make_unique<QTcpServer>(this);
+    serverClients = std::make_unique<QTcpServer>(this);
+    serverReceiver = std::make_unique<QTcpServer>(this);
+    serverSender = std::make_unique<QTcpServer>(this);
+    connect(serverClients.get(), &QTcpServer::newConnection, this,
+            &Connector::slotNewConnectionClient);
+    connect(serverReceiver.get(), &QTcpServer::newConnection, this,
+            &Connector::slotNewConnectionReceiver);
+    connect(serverSender.get(), &QTcpServer::newConnection, this,
+            &Connector::slotNewConnectionSender);
 
-    connect(server.get(), &QTcpServer::newConnection, this,
-            &Connector::slotNewConnection);
-
-    if (!server->listen(QHostAddress::Any, 6000))
+    if (!serverClients->listen(QHostAddress::Any, 6000))
     {
-        qDebug() << "server is not started";
+        qDebug() << "serverClients is not started";
     }
     else
     {
-        qDebug() << "server is started";
+        qDebug() << "serverClients is started";
+    }
+    if (!serverReceiver->listen(QHostAddress::Any, 6001))
+    {
+        qDebug() << "serverReceiver is not started";
+    }
+    else
+    {
+        qDebug() << "serverReceiver is started";
+    }
+    if (!serverSender->listen(QHostAddress::Any, 6002))
+    {
+        qDebug() << "serverSender is not started";
+    }
+    else
+    {
+        qDebug() << "serverSender is started";
     }
 }
 
-void Connector::slotNewConnection()
+void Connector::slotNewConnectionClient()
 {
-    auto socket = server->nextPendingConnection();
-    clientManager->createClient(*socket);
+    auto socket = serverClients->nextPendingConnection();
+    mapSockets.insert(socket->peerAddress(), {*socket, typeSocket::CLIENT});
+    checkClient();
+}
+
+void Connector::slotNewConnectionReceiver()
+{
+    auto socket = serverReceiver->nextPendingConnection();
+    mapSockets.insert(socket->peerAddress(), {*socket, typeSocket::SENDER});
+    checkClient();
+}
+
+void Connector::slotNewConnectionSender()
+{
+    auto socket = serverSender->nextPendingConnection();
+    mapSockets.insert(socket->peerAddress(), {*socket, typeSocket::RECEIVER});
+    checkClient();
+}
+
+void Connector::checkClient()
+{
+    if(mapSockets.size() < 3)
+        return;
+    auto list = mapSockets.uniqueKeys();
+    for (auto &elem : list)
+    {
+        std::vector<std::pair<QTcpSocket&, typeSocket>> vec;
+        for (auto it = mapSockets.begin(); it != mapSockets.end(); it++)
+        {
+            if(it.key() == elem)
+            {
+                vec.push_back({it.value().first, it.value().second});
+            }
+
+        }
+        if(vec.size() == 3)
+        {
+            QTcpSocket * socClient,*socReceiver,*socSender;
+            for (auto & soc:vec)
+            {
+                if(soc.second == typeSocket::CLIENT)
+                {
+                    socClient = &soc.first;
+                }
+                else if(soc.second == typeSocket::RECEIVER)
+                {
+                    socReceiver = &soc.first;
+                }
+                else
+                {
+                    socSender = &soc.first;
+                }
+            }
+            clientManager->createClient(*socClient, *socSender, *socReceiver);
+            mapSockets.remove(elem);
+        }
+    }
 }

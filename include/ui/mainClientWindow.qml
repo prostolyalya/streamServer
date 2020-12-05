@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.0
+import QtQuick.Dialogs 1.3
 
 ApplicationWindow
 {
@@ -37,12 +38,15 @@ ApplicationWindow
     }
     Rectangle
     {
+       id: buttonSend
        anchors.top: mainInput.top
        anchors.left: mainInput.right
        width: 50
        height: 20
+       border.width: 1
+       border.color: "yellow"
        Text {
-           anchors.fill: parent
+           anchors.centerIn: parent
            text: qsTr("Send")
        }
        anchors.rightMargin: 10
@@ -56,6 +60,43 @@ ApplicationWindow
             }
 
        }
+    }
+    Rectangle
+    {
+       anchors.top: buttonSend.bottom
+       anchors.left: buttonSend.left
+       anchors.topMargin: 20
+       width: 80
+       height: 20
+       border.width: 1
+       border.color: "yellow"
+       Text {
+           anchors.centerIn: parent
+           text: qsTr("Send file")
+       }
+       anchors.rightMargin: 10
+       MouseArea
+       {
+            anchors.fill: parent
+            onClicked:
+            {
+                fileDialog.open()
+                mainInput.text = ""
+            }
+
+       }
+    }
+    FileDialog {
+        id: fileDialog
+        title: "Please choose a file"
+        selectMultiple: false
+        onAccepted: {
+            console.log("You chose: " + fileDialog.fileUrl)
+            uiController.sendFile(fileDialog.fileUrl)
+        }
+        onRejected: {
+            fileDialog.close()
+        }
     }
 
 }

@@ -6,6 +6,10 @@ import QtQuick.Window 2.2
 
 ApplicationWindow
 {
+    Component.onCompleted: {
+        x = Screen.width / 2 - width / 2
+        y = Screen.height / 2 - height / 2
+    }
     function checkLogin()
     {
        if ( textLogin.text.length < 5 || textLogin.text.length > 20)
@@ -84,6 +88,10 @@ ApplicationWindow
 
     ApplicationWindow
     {
+        Component.onCompleted: {
+            x = Screen.width / 2 - width / 2
+            y = Screen.height / 2 - height / 2
+        }
          id: logPassWindow
          width: 200
          height: 200

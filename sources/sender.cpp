@@ -1,30 +1,43 @@
 #include "sender.h"
-Sender::Sender(QObject *parent)
+Sender::Sender(QTcpSocket &_socket, QObject *parent)
     : QObject(parent)
+    , socket(_socket)
 {
-    socket = std::make_unique<QTcpSocket>();
-    connect(socket.get(), &QTcpSocket::readyRead, this, &Sender::readSocket);
-    connect(socket.get(),&QTcpSocket::disconnected, this, &Sender::discardSocket);
-    socket->connectToHost(QHostAddress::LocalHost, 6000);
-    if(socket->waitForConnected())
-        qDebug() << "Connected to Server";
-    socket->write("Hello from client");
-}
-
-Sender::~Sender()
-{
-    socket->close();
+    connect(&socket, &QTcpSocket::readyRead, this, &Sender::readSocket);
+    connect(&socket, &QTcpSocket::disconnected, this, &Sender::discardSocket);
 }
 
 void Sender::readSocket()
 {
-    if(socket->bytesAvailable() > 0)
-        qDebug() << socket->readAll();
+    if (socket.bytesAvailable() > 0)
+        qDebug() << socket.readAll();
 }
 
 void Sender::discardSocket()
 {
-    socket->deleteLater();
+    socket.deleteLater();
+}
 
-    qDebug() << "Disconnected!";
+void Sender::connecting()
+{
+    socket.connectToHost(QHostAddress::LocalHost, 6002);
+}
+
+void Sender::sendFile(QString path)
+{
+    path = path.mid(7);
+    QFile file(path);
+    if (file.open(QFile::ReadOnly))
+    {
+        int size = 64;
+        for (int pos = 0; pos < file.size(); pos += 64)
+        {
+            file.seek(pos);
+            QByteArray data = file.read(size);
+            socket.write(data);
+        }
+    }
+    QStringList list = path.split('/');
+    QString name = list.at(list.size()-1);
+    emit fileSent(file.size(), name);
 }

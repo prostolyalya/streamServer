@@ -15,7 +15,7 @@ class ClientManager : public QObject
     Q_OBJECT
 public:
     ClientManager(std::shared_ptr<UiController> ui, QObject *parent = nullptr);
-    void createClient(QTcpSocket &socket);
+    void createClient(QTcpSocket &socketClient, QTcpSocket &socketSender, QTcpSocket &socketReceiver);
 
 public slots:
     void clientDisconnected(int id);

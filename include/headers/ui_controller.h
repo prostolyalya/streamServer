@@ -21,6 +21,7 @@ signals:
     void textServerChanged();
     void sendTextAllUsers(QString text);
     void sendText(QString text);
+    void sendFile(QString path);
 
 private:
     QString textServer;

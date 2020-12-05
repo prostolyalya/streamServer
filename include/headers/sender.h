@@ -7,14 +7,18 @@
 
 class Sender : public QObject
 {
+    Q_OBJECT
 public:
-    Sender(QObject *parent = nullptr);
-    ~Sender();
+    Sender(QTcpSocket& _socket, QObject *parent = nullptr);
+
+    void connecting();
+    void sendFile(QString path);
 public slots:
     void readSocket();
     void discardSocket();
-
+signals:
+    void fileSent(qint64, QString);
 private:
-    std::unique_ptr<QTcpSocket> socket;
+    QTcpSocket& socket;
 };
 #endif // SENDER_H
