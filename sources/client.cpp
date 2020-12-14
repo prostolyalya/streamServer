@@ -8,12 +8,12 @@ Client::Client(QTcpSocket &_socket, QTcpSocket &_socketSender,
     , socketReceiver(_socketReceiver)
     , id(id)
 {
+    current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
+    QDir().mkdir(current_path);
     connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead);
     connect(&socket, &QTcpSocket::disconnected, this, &Client::slotClientDisconnected);
     sender = std::make_unique<Sender>(socketSender);
-    receiver = std::make_unique<Receiver>(socketReceiver);
-    current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
-    QDir().mkdir(current_path);
+    receiver = std::make_unique<Receiver>(socketReceiver, current_path + "tmp");
     connect(sender.get(), &Sender::fileSent, this, &Client::fileSent);
 }
 
@@ -34,18 +34,18 @@ int Client::getId() const
 
 void Client::saveFile()
 {
-    if (sizeFile < receiver.get()->cash.size())
+    if (sizeFile < receiver.get()->file_size)
         QTimer::singleShot(3000, this, &Client::saveFile);
     while(QFile(current_path + fileName).exists())
-        fileName += "1";
-    QFile file(current_path + fileName);
-    if (file.open(QFile::WriteOnly))
+        fileName.push_front("1");
+    QFile file(current_path + "tmp");
+    if (file.open(QFile::ReadOnly))
     {
-        file.write(receiver->cash);
-        file.close();
-        receiver->cash.clear();
+        file.rename(current_path + fileName);
+        receiver->file_size = 0;
+        emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
     }
-    emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
+
 }
 
 void Client::connecting()

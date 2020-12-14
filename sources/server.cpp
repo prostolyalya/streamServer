@@ -6,6 +6,7 @@ Server::Server()
     uiController = std::make_shared<UiController>();
     clientManager = std::make_shared<ClientManager>(uiController);
     connector = std::make_unique<Connector>(clientManager);
+    threadPool = std::make_unique<ThreadPool>();
 }
 
 std::shared_ptr<UiController> Server::getUiController() const

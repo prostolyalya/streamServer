@@ -47,7 +47,9 @@ set(HDRS_LIST
     "qml.qrc"
 )
 find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
-find_package(Boost COMPONENTS thread system REQUIRED)
+#find_package(Boost COMPONENTS thread system REQUIRED)
+#include_directories(include/lib/boost)
+#include_directories(${Boost_INCLUDE_DIR})
 add_executable(streamServer
   main.cpp
   ${SRC_LIST}
@@ -55,5 +57,5 @@ add_executable(streamServer
 )
 target_compile_definitions(streamServer
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(streamServer Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets Qt::Sql Boost::thread Boost::system)
+target_link_libraries(streamServer Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets Qt::Sql )#${Boost_LIBRARIES}
 target_include_directories(streamServer PUBLIC include)

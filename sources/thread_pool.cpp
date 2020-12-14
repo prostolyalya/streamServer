@@ -1,7 +1,7 @@
 #include "thread_pool.h"
-#include <iostream>
+#include <QDebug>
 
 ThreadPool::ThreadPool()
 {
-    std::cout << &std::thread::hardware_concurrency << std::endl;
+
 }

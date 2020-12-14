@@ -1,10 +1,12 @@
 #include "receiver.h"
-
+#include <QFile>
 #include <QHostAddress>
 
-Receiver::Receiver(QTcpSocket&_socket, QObject *parent)
+Receiver::Receiver(QTcpSocket&_socket, QString path, QObject *parent)
     : QObject(parent),
+      tmp_path(path),
       socket(_socket)
+
 {
     connect(&socket, &QTcpSocket::readyRead, this, &Receiver::slotRead);
     connect(&socket, &QTcpSocket::disconnected, this, &Receiver::slotDisconnected);
@@ -15,7 +17,11 @@ void Receiver::slotRead()
     while (socket.bytesAvailable() > 0)
     {
         QByteArray data = socket.readAll();
-        cash += data;
+        QFile file(tmp_path);
+        file.open(QIODevice::Append|QIODevice::WriteOnly);
+        file.write(data);
+        file.close();
+        file_size += data.size();
     }
 }
 

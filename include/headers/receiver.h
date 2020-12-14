@@ -8,11 +8,12 @@ class Receiver : public QObject
 {
     Q_OBJECT
 public:
-    Receiver(QTcpSocket &_socket, QObject* parent = nullptr);
+    Receiver(QTcpSocket &_socket, QString path, QObject* parent = nullptr);
 
     void connecting();
 
-    QByteArray cash = "";
+    QString tmp_path = "";
+    qint64 file_size = 0;
 public slots:
     void slotRead();
     void slotDisconnected();
