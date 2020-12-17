@@ -21,7 +21,7 @@ void Receiver::slotRead()
         file.open(QIODevice::Append|QIODevice::WriteOnly);
         file.write(data);
         file.close();
-        file_size += data.size();
+        file_size = file.size();
     }
 }
 

@@ -41,8 +41,14 @@ void Client::saveFile()
         while (QFile(current_path + fileName).exists())
             fileName.push_front("1");
         QFile file(current_path + "tmp");
+        if (file.size() < sizeFile)
+        {
+            QTimer::singleShot(3000, this, &Client::saveFile);
+            return;
+        }
         if (file.open(QFile::ReadOnly))
         {
+
             file.rename(current_path + fileName);
             receiver->file_size = 0;
             emit messageReceived("File received: " + current_path.toUtf8()
