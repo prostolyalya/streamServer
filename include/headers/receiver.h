@@ -11,7 +11,7 @@ public:
     Receiver(QTcpSocket &_socket, QString path, QObject* parent = nullptr);
 
     void connecting();
-
+    void clearTmpFile();
     QString tmp_path = "";
     qint64 file_size = 0;
 public slots:

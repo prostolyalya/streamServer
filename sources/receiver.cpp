@@ -32,6 +32,12 @@ void Receiver::slotDisconnected()
 
 void Receiver::connecting()
 {
-     socket.connectToHost(QHostAddress::LocalHost, 6001);
+    socket.connectToHost(QHostAddress::LocalHost, 6001);
+}
+
+void Receiver::clearTmpFile()
+{
+    QFile file(tmp_path);
+    file.remove();
 }
 
