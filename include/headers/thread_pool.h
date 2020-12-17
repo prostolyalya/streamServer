@@ -3,16 +3,18 @@
 #pragma once
 
 #include <thread>
-
-//using namespace boost::threadpool;
+#include <QThreadPool>
 class ThreadPool
 {
 
 public:
     ThreadPool();
-    bool addToThread();
+    void addToThread(std::function<void()> fun);
+    static ThreadPool *instance;
+    static ThreadPool *getInstance();
 
 private:
+    QThreadPool *pool = nullptr;
 };
 
 #endif // THREAD_POOL_H

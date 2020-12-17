@@ -18,7 +18,6 @@ public:
     void sendMessage(QString text);
 
     int getId() const;
-
 private:
     QTcpSocket& socket;
     QTcpSocket& socketSender;

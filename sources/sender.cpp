@@ -5,6 +5,7 @@ Sender::Sender(QTcpSocket &_socket, QObject *parent)
 {
     connect(&socket, &QTcpSocket::readyRead, this, &Sender::readSocket);
     connect(&socket, &QTcpSocket::disconnected, this, &Sender::discardSocket);
+    connect(this, &Sender::sendFileSignal, this, &Sender::sendFile);
 }
 
 void Sender::readSocket()
@@ -18,15 +19,19 @@ void Sender::discardSocket()
     socket.deleteLater();
 }
 
+void Sender::setFile_path(const QString &value)
+{
+    file_path = value;
+}
+
 void Sender::connecting()
 {
     socket.connectToHost(QHostAddress::LocalHost, 6002);
 }
 
-void Sender::sendFile(QString path)
+void Sender::sendFile()
 {
-    path = path.mid(7);
-    QFile file(path);
+    QFile file(file_path);
     if (file.open(QFile::ReadOnly))
     {
         int size = 64;
@@ -34,10 +39,14 @@ void Sender::sendFile(QString path)
         {
             file.seek(pos);
             QByteArray data = file.read(size);
+
             socket.write(data);
         }
     }
-    QStringList list = path.split('/');
+    QStringList list = file_path.split('/');
     QString name = list.at(list.size()-1);
     emit fileSent(file.size(), name);
+    qDebug() << file.size();
 }
+
+

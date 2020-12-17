@@ -12,13 +12,17 @@ public:
     Sender(QTcpSocket& _socket, QObject *parent = nullptr);
 
     void connecting();
-    void sendFile(QString path);
+
+    void setFile_path(const QString &value);
 public slots:
     void readSocket();
     void discardSocket();
+    void sendFile();
 signals:
     void fileSent(qint64, QString);
+    void sendFileSignal();
 private:
     QTcpSocket& socket;
+    QString file_path = "";
 };
 #endif // SENDER_H

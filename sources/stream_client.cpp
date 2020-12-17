@@ -12,6 +12,7 @@ StreamClient::StreamClient(QObject *parent)
     connect(client.get(), &Client::messageReceived, this, &StreamClient::textToUi);
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile);
     client.get()->connecting();
+    thread_pool = std::make_unique<ThreadPool>();
 }
 
 StreamClient::~StreamClient()

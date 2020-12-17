@@ -5,7 +5,7 @@
 #include "client.h"
 #include "ui_controller.h"
 #include <QTcpSocket>
-
+#include "thread_pool.h"
 class StreamClient : public QObject
 {
     Q_OBJECT
@@ -24,6 +24,7 @@ private:
     std::unique_ptr<QTcpSocket> socketSender;
     std::unique_ptr<QTcpSocket> socketReceiver;
     std::unique_ptr<Client> client;
+    std::unique_ptr<ThreadPool> thread_pool;
     std::shared_ptr<UiController> uiController;
 };
 

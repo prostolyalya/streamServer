@@ -1,5 +1,5 @@
 #include "client.h"
-
+#include "thread_pool.h"
 Client::Client(QTcpSocket &_socket, QTcpSocket &_socketSender,
                QTcpSocket &_socketReceiver, int id, QObject *parent)
     : QObject(parent)
@@ -94,10 +94,14 @@ void Client::slotClientDisconnected()
 void Client::fileSent(qint64 size, QString fileName)
 {
     socket.write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8());
+    emit messageReceived("File sent: " + fileName.toUtf8());
 }
 
 void Client::sendFile(QString path)
 {
-    emit messageReceived("Send file: " + path.mid(7).toUtf8());
-    sender.get()->sendFile(path);
+    path = path.mid(7);
+    emit messageReceived("Send file: " + path.toUtf8());
+    sender.get()->setFile_path(path);
+    auto f = std::bind(&Sender::sendFileSignal, sender.get());
+    ThreadPool::getInstance()->addToThread(f);
 }
