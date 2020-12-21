@@ -12,7 +12,7 @@ StreamClient::StreamClient(QObject *parent)
     connect(uiController.get(), &UiController::sendText, this, &StreamClient::sendText);
     connect(client.get(), &Client::messageReceived, this, &StreamClient::textToUi);
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile);
-    ThreadPool::getInstance()->addToThread(uiController.get());
+    ThreadPool::getInstance()->addToThread(this);
     client.get()->connecting();
 
 }
