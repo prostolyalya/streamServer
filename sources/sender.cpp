@@ -49,4 +49,9 @@ void Sender::sendFile()
     qDebug() << file.size();
 }
 
+void Sender::setSender_socket(QTcpSocket *value)
+{
+    sender_socket = std::make_unique<QTcpSocket>(value);
+}
+
 
