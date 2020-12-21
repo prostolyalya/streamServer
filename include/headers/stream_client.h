@@ -26,6 +26,7 @@ private:
     std::unique_ptr<Client> client;
     std::unique_ptr<ThreadPool> thread_pool;
     std::shared_ptr<UiController> uiController;
+    const QString host = "192.168.0.102";
 };
 
 #endif // STREAMCLIENT_H

@@ -3,21 +3,38 @@
 
 ThreadPool* ThreadPool::instance = nullptr;
 
-ThreadPool::ThreadPool()
+ ThreadPool::ThreadPool()
 {
-    pool = new QThreadPool();
-    uint8_t count_threads = std::thread::hardware_concurrency();
-    pool->setMaxThreadCount(count_threads - 1);
+//    pool = new QThreadPool();
+//    uint8_t count_threads = std::thread::hardware_concurrency();
+//    pool->setMaxThreadCount(count_threads - 1);
     instance = this;
 }
 
-ThreadPool *ThreadPool::getInstance()
+ ThreadPool *ThreadPool::getInstance()
 {
     return instance;
 }
 
-void ThreadPool::addToThread(std::function<void()> fun)
+// void ThreadPool::addToThread(std::function<void()> fun)
+//{
+//    instance->pool->start(fun);
+//    qDebug() << instance->pool->activeThreadCount();
+//}
+
+ThreadPool::~ThreadPool()
 {
-    instance->pool->start(fun);
-    qDebug() << instance->pool->activeThreadCount();
+    for (auto& thread : pool)
+    {
+        thread->quit();
+        thread->wait();
+    }
+}
+
+void ThreadPool::addToThread(QObject* object)
+{
+    QThread* thread = new QThread();
+    connect(thread, &QThread::finished, object, &QObject::deleteLater);
+    pool.insert(thread);
+    thread->start();
 }

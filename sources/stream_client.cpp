@@ -3,6 +3,7 @@
 StreamClient::StreamClient(QObject *parent)
     :QObject(parent)
 {
+    thread_pool = std::make_unique<ThreadPool>();
     socket = std::make_unique<QTcpSocket>();
     socketSender = std::make_unique<QTcpSocket>();
     socketReceiver = std::make_unique<QTcpSocket>();
@@ -11,8 +12,9 @@ StreamClient::StreamClient(QObject *parent)
     connect(uiController.get(), &UiController::sendText, this, &StreamClient::sendText);
     connect(client.get(), &Client::messageReceived, this, &StreamClient::textToUi);
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile);
+    ThreadPool::getInstance()->addToThread(uiController.get());
     client.get()->connecting();
-    thread_pool = std::make_unique<ThreadPool>();
+
 }
 
 StreamClient::~StreamClient()

@@ -24,9 +24,9 @@ void Sender::setFile_path(const QString &value)
     file_path = value;
 }
 
-void Sender::connecting()
+void Sender::connecting(QHostAddress host)
 {
-    socket.connectToHost(QHostAddress::LocalHost, 6002);
+    socket.connectToHost(host, 6002);
 }
 
 void Sender::sendFile()

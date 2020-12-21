@@ -15,6 +15,7 @@ Client::Client(QTcpSocket &_socket, QTcpSocket &_socketSender,
     sender = std::make_unique<Sender>(socketSender);
     receiver = std::make_unique<Receiver>(socketReceiver, current_path + "tmp");
     connect(sender.get(), &Sender::fileSent, this, &Client::fileSent);
+    ThreadPool::getInstance()->addToThread(sender.get());
 }
 
 Client::~Client()
@@ -65,9 +66,9 @@ void Client::connecting()
     socket.waitForConnected(3000);
     if (socket.state() == QTcpSocket::ConnectedState)
     {
-        emit messageReceived("Connected to server");
         sender.get()->connecting();
         receiver.get()->connecting();
+        emit messageReceived("Connected to server");
     }
     else
     {
@@ -112,6 +113,7 @@ void Client::sendFile(QString path)
     path = path.mid(7);
     emit messageReceived("Send file: " + path.toUtf8());
     sender.get()->setFile_path(path);
-    auto f = std::bind(&Sender::sendFileSignal, sender.get());
-    ThreadPool::getInstance()->addToThread(f);
+    sender.get()->sendFile();
+//    auto f = std::bind(&Sender::sendFileSignal, sender.get());
+//    ThreadPool::getInstance()->addToThread(f);
 }
