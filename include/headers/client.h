@@ -18,7 +18,9 @@ public:
     void sendMessage(QString text);
 
     int getId() const;
+
 private:
+    std::unique_ptr<QTcpSocket> sock;
     QTcpSocket& socket;
     QTcpSocket& socketSender;
     QTcpSocket& socketReceiver;
@@ -26,13 +28,17 @@ private:
     qint64 sizeFile = 0;
     std::unique_ptr<Sender> sender;
     std::unique_ptr<Receiver> receiver;
+
     QString current_path;
     QString fileName = "";
 
     void saveFile();
+
 public:
     void connecting();
-
+    void set_sockets(QTcpSocket* socket, QTcpSocket* socket_sender,
+                           QTcpSocket* socket_receiver);
+    void moveSenderToThread();
 public slots:
     void slotRead();
     void slotClientDisconnected();

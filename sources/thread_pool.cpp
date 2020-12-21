@@ -31,11 +31,12 @@ ThreadPool::~ThreadPool()
     }
 }
 
-void ThreadPool::addToThread(QObject* object)
+QThread *ThreadPool::addToThread(QObject* object)
 {
     QThread* thread = new QThread();
     connect(thread, &QThread::finished, object, &QObject::deleteLater);
     pool.insert(thread);
     object->moveToThread(thread);
     thread->start();
+    return thread;
 }

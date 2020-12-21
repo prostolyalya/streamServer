@@ -14,6 +14,8 @@ public:
     void connecting(QHostAddress host = QHostAddress::Any);
 
     void setFile_path(const QString &value);
+    void setSender_socket(QTcpSocket *value);
+
 public slots:
     void readSocket();
     void discardSocket();
@@ -23,6 +25,7 @@ signals:
     void sendFileSignal();
 private:
     QTcpSocket& socket;
+    std::unique_ptr<QTcpSocket> sender_socket;
     QString file_path = "";
 };
 #endif // SENDER_H

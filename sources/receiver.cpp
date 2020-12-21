@@ -30,6 +30,11 @@ void Receiver::slotDisconnected()
     socket.deleteLater();
 }
 
+void Receiver::setReceiver_socket(QTcpSocket *value)
+{
+    receiver_socket = std::make_unique<QTcpSocket>(value);
+}
+
 void Receiver::connecting()
 {
     socket.connectToHost(QHostAddress::LocalHost, 6001);

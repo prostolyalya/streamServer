@@ -15,7 +15,6 @@ Client::Client(QTcpSocket &_socket, QTcpSocket &_socketSender,
     sender = std::make_unique<Sender>(socketSender);
     receiver = std::make_unique<Receiver>(socketReceiver, current_path + "tmp");
     connect(sender.get(), &Sender::fileSent, this, &Client::fileSent);
-    ThreadPool::getInstance()->addToThread(sender.get());
 }
 
 Client::~Client()
@@ -31,6 +30,19 @@ void Client::sendMessage(QString text)
 int Client::getId() const
 {
     return id;
+}
+
+void Client::set_sockets(QTcpSocket * socket, QTcpSocket * socket_sender, QTcpSocket * socket_receiver)
+{
+    sock = std::make_unique<QTcpSocket>(socket);
+    sender.get()->setSender_socket(socket_sender);
+    receiver.get()->setReceiver_socket(socket_receiver);
+}
+
+void Client::moveSenderToThread()
+{
+    auto x = ThreadPool::getInstance()->addToThread(sender.get());
+    qDebug() << x << QThread::currentThread();
 }
 
 void Client::saveFile()
