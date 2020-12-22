@@ -1,5 +1,5 @@
 #include "client_manager.h"
-
+#include "thread_pool.h"
 ClientManager::ClientManager(std::shared_ptr<UiController> ui, QObject *parent)
     : QObject(parent),
       uiController(ui)
@@ -15,11 +15,13 @@ void ClientManager::createClient(QTcpSocket& socketClient, QTcpSocket &socketSen
     connect(client.get(), &Client::clientDisconnect, this, &ClientManager::clientDisconnected);
     connect(client.get(), &Client::messageReceived, this, &ClientManager::receiveMessage);
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile);
+    ThreadPool::getInstance()->addToThread(client.get());
     clients.insert(std::make_pair(count_clients, std::move(client)));
     QString num = QString::number(count_clients);
     uiController.get()->addText(num + " client connected");
     DB->addUser(num, num + " login", num + " password");
     count_clients++;
+
 }
 
 void ClientManager::sendMessageToClients(QString text)

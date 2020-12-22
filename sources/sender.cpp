@@ -5,7 +5,6 @@ Sender::Sender(QTcpSocket &_socket, QObject *parent)
 {
     connect(&socket, &QTcpSocket::readyRead, this, &Sender::readSocket);
     connect(&socket, &QTcpSocket::disconnected, this, &Sender::discardSocket);
-    connect(this, &Sender::sendFileSignal, this, &Sender::sendFile);
 }
 
 void Sender::readSocket()
@@ -22,11 +21,6 @@ void Sender::discardSocket()
 void Sender::setFile_path(const QString &value)
 {
     file_path = value;
-}
-
-void Sender::connecting(QHostAddress host)
-{
-    socket.connectToHost(host, 6002);
 }
 
 void Sender::sendFile()
@@ -49,9 +43,5 @@ void Sender::sendFile()
     qDebug() << file.size();
 }
 
-void Sender::setSender_socket(QTcpSocket *value)
-{
-    sender_socket = std::make_unique<QTcpSocket>(value);
-}
 
 

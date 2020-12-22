@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>include/ui/mainServerWindow.qml</file>
-        <file>include/ui/mainClientWindow.qml</file>
         <file>include/ui/startWindow.qml</file>
     </qresource>
 </RCC>

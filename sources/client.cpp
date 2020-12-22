@@ -1,20 +1,19 @@
 #include "client.h"
 #include "thread_pool.h"
-Client::Client(QTcpSocket &_socket, QTcpSocket &_socketSender,
-               QTcpSocket &_socketReceiver, int id, QObject *parent)
+Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender,
+               QTcpSocket& _socketReceiver, int id, QObject* parent)
     : QObject(parent)
     , socket(_socket)
-    , socketSender(_socketSender)
-    , socketReceiver(_socketReceiver)
     , id(id)
 {
     current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
     QDir().mkdir(current_path);
     connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead);
     connect(&socket, &QTcpSocket::disconnected, this, &Client::slotClientDisconnected);
-    sender = std::make_unique<Sender>(socketSender);
-    receiver = std::make_unique<Receiver>(socketReceiver, current_path + "tmp");
+    sender = std::make_unique<Sender>(_socketSender);
+    receiver = std::make_unique<Receiver>(_socketReceiver, current_path + "tmp");
     connect(sender.get(), &Sender::fileSent, this, &Client::fileSent);
+    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile);
 }
 
 Client::~Client()
@@ -30,19 +29,6 @@ void Client::sendMessage(QString text)
 int Client::getId() const
 {
     return id;
-}
-
-void Client::set_sockets(QTcpSocket * socket, QTcpSocket * socket_sender, QTcpSocket * socket_receiver)
-{
-    sock = std::make_unique<QTcpSocket>(socket);
-    sender.get()->setSender_socket(socket_sender);
-    receiver.get()->setReceiver_socket(socket_receiver);
-}
-
-void Client::moveSenderToThread()
-{
-    auto x = ThreadPool::getInstance()->addToThread(sender.get());
-    qDebug() << x << QThread::currentThread();
 }
 
 void Client::saveFile()
@@ -63,29 +49,16 @@ void Client::saveFile()
         {
 
             file.rename(current_path + fileName);
-            receiver->file_size = 0;
             emit messageReceived("File received: " + current_path.toUtf8()
                                  + fileName.toUtf8());
         }
+        else
+        {
+            emit messageReceived("Error with receive file!");
+        }
+        receiver->file_size = 0;
         receiver.get()->clearTmpFile();
-    }
-}
-
-void Client::connecting()
-{
-    socket.reset();
-    socket.connectToHost(QHostAddress::LocalHost, 6000);
-    socket.waitForConnected(3000);
-    if (socket.state() == QTcpSocket::ConnectedState)
-    {
-        sender.get()->connecting();
-        receiver.get()->connecting();
-        emit messageReceived("Connected to server");
-    }
-    else
-    {
-        emit messageReceived("Can`t connect to server, reconnecting...");
-        QTimer::singleShot(3000, this, &Client::connecting);
+        sizeFile = 0;
     }
 }
 
@@ -103,8 +76,7 @@ void Client::slotRead()
             QTimer::singleShot(1000, this, &Client::saveFile);
         }
         else
-            emit messageReceived("From " + (id == 0 ? "server" : QByteArray::number(id))
-                                 + ": " + array);
+            emit messageReceived("From " + QByteArray::number(id) + ": " + array);
     }
 }
 
@@ -125,7 +97,7 @@ void Client::sendFile(QString path)
     path = path.mid(7);
     emit messageReceived("Send file: " + path.toUtf8());
     sender.get()->setFile_path(path);
-    sender.get()->sendFile();
-//    auto f = std::bind(&Sender::sendFileSignal, sender.get());
-//    ThreadPool::getInstance()->addToThread(f);
+    emit sendFileSignal();
+    //    auto f = std::bind(&Sender::sendFileSignal, sender.get());
+    //    ThreadPool::getInstance()->addToThread(f);
 }

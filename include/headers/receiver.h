@@ -14,7 +14,6 @@ public:
     void clearTmpFile();
     QString tmp_path = "";
     qint64 file_size = 0;
-    void setReceiver_socket(QTcpSocket *value);
 
 public slots:
     void slotRead();
@@ -22,6 +21,5 @@ public slots:
 
 private:
     QTcpSocket& socket;
-    std::unique_ptr<QTcpSocket> receiver_socket;
 };
 #endif // RECEIVER_H

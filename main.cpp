@@ -1,6 +1,9 @@
 #include <QGuiApplication>
-
-#include "starter.h"
+#include <qqml.h>
+#include <QObject>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include "server.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,8 +12,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    auto st = std::make_unique<Starter>(engine);
-    engine.rootContext()->setContextProperty("Starter", st.get());
+    auto uiController = std::make_shared<UiController>();
+    auto server = std::make_unique<Server>(uiController, engine);
+    engine.rootContext()->setContextProperty("uiController",
+                                             uiController.get());
     const QUrl url(QStringLiteral("qrc:/include/ui/startWindow.qml"));
     engine.load(url);
     return app.exec();

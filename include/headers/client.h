@@ -20,10 +20,8 @@ public:
     int getId() const;
 
 private:
-    std::unique_ptr<QTcpSocket> sock;
     QTcpSocket& socket;
-    QTcpSocket& socketSender;
-    QTcpSocket& socketReceiver;
+
     int id = 0;
     qint64 sizeFile = 0;
     std::unique_ptr<Sender> sender;
@@ -36,9 +34,6 @@ private:
 
 public:
     void connecting();
-    void set_sockets(QTcpSocket* socket, QTcpSocket* socket_sender,
-                           QTcpSocket* socket_receiver);
-    void moveSenderToThread();
 public slots:
     void slotRead();
     void slotClientDisconnected();
@@ -47,5 +42,6 @@ public slots:
 signals:
     void clientDisconnect(int id);
     void messageReceived(QByteArray msg);
+    void sendFileSignal();
 };
 #endif // CLIENT_H

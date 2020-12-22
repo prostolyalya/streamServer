@@ -12,17 +12,18 @@ class UiController : public QObject
 public:
     UiController(QObject* parent = nullptr);
     ~UiController();
-    void addText(QString text);
+
     QString getText() const;
 
     void setText(const QString& value);
-
+public slots:
+    void addText(QString text);
 signals:
     void textServerChanged();
     void sendTextAllUsers(QString text);
     void sendText(QString text);
     void sendFile(QString path);
-
+    void init(QString login, QString pass);
 private:
     QString textServer;
 };
