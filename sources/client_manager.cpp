@@ -17,7 +17,7 @@ void ClientManager::createClient(QTcpSocket &socketClient, QTcpSocket &socketSen
     connect(this, &ClientManager::sendMessageToAll, client.get(), &Client::sendMessage, Qt::QueuedConnection);
     connect(client.get(), &Client::clientDisconnect, this, &ClientManager::clientDisconnected,
             Qt::QueuedConnection);
-    connect(client.get(), &Client::messageReceived, this, &ClientManager::receiveMessage,
+    connect(client.get(), &Client::messageReceived, uiController.get(), &UiController::addText,
             Qt::QueuedConnection);
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile,
             Qt::QueuedConnection);
@@ -31,7 +31,6 @@ void ClientManager::createClient(QTcpSocket &socketClient, QTcpSocket &socketSen
 
 void ClientManager::sendMessageToClients(QString text)
 {
-    qDebug() << "!1111";
     emit sendMessageToAll(text);
 }
 
@@ -42,9 +41,4 @@ void ClientManager::clientDisconnected(int id)
     clients.erase(it);
     qDebug() << id << "client disconnected";
     uiController.get()->addText(QString::number(id) + " client disconnected");
-}
-
-void ClientManager::receiveMessage(QByteArray msg)
-{
-    uiController.get()->addText(msg);
 }

@@ -23,7 +23,6 @@ Client::~Client()
 
 void Client::sendMessage(QString text)
 {
-    qDebug() << "2222";
     socket.write(text.toUtf8());
 }
 
@@ -122,6 +121,7 @@ void Client::fileSent(qint64 size, QString fileName)
 
 void Client::sendFile(QString path)
 {
+    qDebug() << "request file";
     emit messageReceived("Request file: " + path.toUtf8());
     sender.get()->setFile_path(path);
     emit sendFileSignal();

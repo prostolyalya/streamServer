@@ -28,13 +28,14 @@ void Sender::sendFile()
     QFile file(file_path);
     if (file.open(QFile::ReadOnly))
     {
-        int size = 64;
-        for (int pos = 0; pos < file.size(); pos += 64)
+        int size = 2048;
+        for (int pos = 0; pos < file.size(); pos += 2048)
         {
             file.seek(pos);
             QByteArray data = file.read(size);
-            while (socket.waitForBytesWritten(100))
+            while(socket.waitForReadyRead(5))
             {
+
             }
             socket.write(data);
         }

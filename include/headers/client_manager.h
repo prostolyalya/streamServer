@@ -20,7 +20,6 @@ public:
 public slots:
     void clientDisconnected(int id);
     void sendMessageToClients(QString text);
-    void receiveMessage(QByteArray msg);
 
 private:
     std::shared_ptr<UiController> uiController;
