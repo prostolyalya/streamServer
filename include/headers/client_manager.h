@@ -27,5 +27,8 @@ private:
     std::map<int, std::unique_ptr<Client>> clients;
     std::unique_ptr<DBConnector> DB;
     int count_clients = 1;
+
+signals:
+    void sendMessageToAll(QString text);
 };
 #endif // CLIENTMANAGER_H

@@ -1,19 +1,19 @@
 #include "client.h"
 #include "thread_pool.h"
-Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender,
-               QTcpSocket& _socketReceiver, int id, QObject* parent)
+Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver, int id,
+               QObject* parent)
     : QObject(parent)
     , socket(_socket)
     , id(id)
 {
     current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
     QDir().mkdir(current_path);
-    connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead);
-    connect(&socket, &QTcpSocket::disconnected, this, &Client::slotClientDisconnected);
+    connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead, Qt::QueuedConnection);
+    connect(&socket, &QTcpSocket::disconnected, this, &Client::slotClientDisconnected, Qt::QueuedConnection);
     sender = std::make_unique<Sender>(_socketSender);
     receiver = std::make_unique<Receiver>(_socketReceiver, current_path + "tmp");
     connect(sender.get(), &Sender::fileSent, this, &Client::fileSent);
-    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile);
+    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile, Qt::QueuedConnection);
 }
 
 Client::~Client()
@@ -23,6 +23,7 @@ Client::~Client()
 
 void Client::sendMessage(QString text)
 {
+    qDebug() << "2222";
     socket.write(text.toUtf8());
 }
 
@@ -49,8 +50,7 @@ void Client::saveFile()
         {
 
             file.rename(current_path + fileName);
-            emit messageReceived("File received: " + current_path.toUtf8()
-                                 + fileName.toUtf8());
+            emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
         }
         else
         {
@@ -64,12 +64,13 @@ void Client::saveFile()
 
 void Client::requestFileList()
 {
+    qDebug() << "request file list";
     QDir dir(current_path);
     QStringList list = dir.entryList();
     QByteArray data = "response_list_file&";
-    for (auto & name : list)
+    for (auto& name : list)
     {
-        if(name == "." || name == "..")
+        if (name == "." || name == "..")
             continue;
         data += "/" + name.toUtf8();
     }
@@ -98,7 +99,7 @@ void Client::slotRead()
                 sendFile(current_path + data);
             }
         }
-        else if (array == "request_list_file")
+        else if (array.startsWith("request_list_file"))
         {
             requestFileList();
         }
@@ -117,7 +118,6 @@ void Client::fileSent(qint64 size, QString fileName)
 {
     socket.write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8());
     emit messageReceived("File sent: " + fileName.toUtf8());
-
 }
 
 void Client::sendFile(QString path)

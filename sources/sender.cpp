@@ -33,15 +33,14 @@ void Sender::sendFile()
         {
             file.seek(pos);
             QByteArray data = file.read(size);
-
+            while (socket.waitForBytesWritten(100))
+            {
+            }
             socket.write(data);
         }
     }
     QStringList list = file_path.split('/');
-    QString name = list.at(list.size()-1);
+    QString name = list.at(list.size() - 1);
     emit fileSent(file.size(), name);
     qDebug() << file.size();
 }
-
-
-

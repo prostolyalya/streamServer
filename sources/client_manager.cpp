@@ -1,36 +1,38 @@
 #include "client_manager.h"
 #include "thread_pool.h"
 ClientManager::ClientManager(std::shared_ptr<UiController> ui, QObject *parent)
-    : QObject(parent),
-      uiController(ui)
+    : QObject(parent)
+    , uiController(ui)
 {
-    connect(uiController.get(), &UiController::sendTextAllUsers, this, &ClientManager::sendMessageToClients);
+    connect(uiController.get(), &UiController::sendTextAllUsers, this, &ClientManager::sendMessageToClients,
+            Qt::QueuedConnection);
     DB = std::make_unique<DBConnector>("clients");
 }
 
-void ClientManager::createClient(QTcpSocket& socketClient, QTcpSocket &socketSender, QTcpSocket &socketReceiver)
+void ClientManager::createClient(QTcpSocket &socketClient, QTcpSocket &socketSender,
+                                 QTcpSocket &socketReceiver)
 {
-//    check log/pass
+    //    check log/pass
     auto client = std::make_unique<Client>(socketClient, socketSender, socketReceiver, count_clients);
+    connect(this, &ClientManager::sendMessageToAll, client.get(), &Client::sendMessage, Qt::QueuedConnection);
+    connect(client.get(), &Client::clientDisconnect, this, &ClientManager::clientDisconnected,
+            Qt::QueuedConnection);
+    connect(client.get(), &Client::messageReceived, this, &ClientManager::receiveMessage,
+            Qt::QueuedConnection);
+    connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile,
+            Qt::QueuedConnection);
     ThreadPool::getInstance()->addToThread(client.get());
-    connect(client.get(), &Client::clientDisconnect, this, &ClientManager::clientDisconnected);
-    connect(client.get(), &Client::messageReceived, this, &ClientManager::receiveMessage);
-    connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile);
-
     clients.insert(std::make_pair(count_clients, std::move(client)));
     QString num = QString::number(count_clients);
     uiController.get()->addText(num + " client connected");
     DB->addUser(num, num + " login", num + " password");
     count_clients++;
-
 }
 
 void ClientManager::sendMessageToClients(QString text)
 {
-    for(auto&client:clients)
-    {
-        client.second->sendMessage(text);
-    }
+    qDebug() << "!1111";
+    emit sendMessageToAll(text);
 }
 
 void ClientManager::clientDisconnected(int id)
@@ -46,5 +48,3 @@ void ClientManager::receiveMessage(QByteArray msg)
 {
     uiController.get()->addText(msg);
 }
-
-

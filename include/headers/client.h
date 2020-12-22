@@ -12,10 +12,9 @@ class Client : public QObject
 {
     Q_OBJECT
 public:
-    Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver,
-           int id, QObject* parent = nullptr);
+    Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver, int id,
+           QObject* parent = nullptr);
     ~Client();
-    void sendMessage(QString text);
 
     int getId() const;
 
@@ -32,6 +31,7 @@ private:
 
     void saveFile();
     void requestFileList();
+
 public:
     void connecting();
 public slots:
@@ -39,6 +39,8 @@ public slots:
     void slotClientDisconnected();
     void fileSent(qint64 size, QString fileName);
     void sendFile(QString path);
+    void sendMessage(QString text);
+
 signals:
     void clientDisconnect(int id);
     void messageReceived(QByteArray msg);
