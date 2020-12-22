@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
                                              uiController.get());
     const QUrl url(QStringLiteral("qrc:/include/ui/startWindow.qml"));
     engine.load(url);
+
     return app.exec();
 }
 

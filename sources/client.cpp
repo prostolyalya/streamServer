@@ -62,6 +62,20 @@ void Client::saveFile()
     }
 }
 
+void Client::requestFileList()
+{
+    QDir dir(current_path);
+    QStringList list = dir.entryList();
+    QByteArray data = "response_list_file&";
+    for (auto & name : list)
+    {
+        if(name == "." || name == "..")
+            continue;
+        data += "/" + name.toUtf8();
+    }
+    socket.write(data);
+}
+
 void Client::slotRead()
 {
     while (socket.bytesAvailable() > 0)
@@ -74,6 +88,19 @@ void Client::slotRead()
             fileName = list.at(2);
             sizeFile = data.toInt();
             QTimer::singleShot(1000, this, &Client::saveFile);
+        }
+        else if (array.startsWith("request_file"))
+        {
+            QByteArrayList list = array.split('/');
+            QByteArray data = list.at(1);
+            if (QFile::exists(current_path + data))
+            {
+                sendFile(current_path + data);
+            }
+        }
+        else if (array == "request_list_file")
+        {
+            requestFileList();
         }
         else
             emit messageReceived("From " + QByteArray::number(id) + ": " + array);
@@ -90,12 +117,12 @@ void Client::fileSent(qint64 size, QString fileName)
 {
     socket.write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8());
     emit messageReceived("File sent: " + fileName.toUtf8());
+
 }
 
 void Client::sendFile(QString path)
 {
-    path = path.mid(7);
-    emit messageReceived("Send file: " + path.toUtf8());
+    emit messageReceived("Request file: " + path.toUtf8());
     sender.get()->setFile_path(path);
     emit sendFileSignal();
     //    auto f = std::bind(&Sender::sendFileSignal, sender.get());

@@ -12,10 +12,11 @@ void ClientManager::createClient(QTcpSocket& socketClient, QTcpSocket &socketSen
 {
 //    check log/pass
     auto client = std::make_unique<Client>(socketClient, socketSender, socketReceiver, count_clients);
+    ThreadPool::getInstance()->addToThread(client.get());
     connect(client.get(), &Client::clientDisconnect, this, &ClientManager::clientDisconnected);
     connect(client.get(), &Client::messageReceived, this, &ClientManager::receiveMessage);
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile);
-    ThreadPool::getInstance()->addToThread(client.get());
+
     clients.insert(std::make_pair(count_clients, std::move(client)));
     QString num = QString::number(count_clients);
     uiController.get()->addText(num + " client connected");

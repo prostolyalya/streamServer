@@ -31,7 +31,7 @@ private:
     QString fileName = "";
 
     void saveFile();
-
+    void requestFileList();
 public:
     void connecting();
 public slots:
