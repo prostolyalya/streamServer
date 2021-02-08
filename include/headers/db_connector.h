@@ -13,9 +13,9 @@ class DBConnector
 {
 public:
     DBConnector(QString dbName);
-    bool findUser(QString user_id);
-    bool addUser(QString user_id, QString login, QString passcode);
-
+    bool findUser(QString login);
+    bool addUser(QString login, QString password);
+    bool loginUser(QString login, QString password);
 private:
     QSqlDatabase db;
     QString tableName1 = "users";

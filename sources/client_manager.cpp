@@ -6,14 +6,15 @@ ClientManager::ClientManager(std::shared_ptr<UiController> ui, QObject *parent)
 {
     connect(uiController.get(), &UiController::sendTextAllUsers, this, &ClientManager::sendMessageToClients,
             Qt::QueuedConnection);
-    DB = std::make_unique<DBConnector>("clients");
+    DB = std::make_shared<DBConnector>("clients");
+    auth = std::make_shared<Authenticator>(DB);
 }
 
 void ClientManager::createClient(QTcpSocket &socketClient, QTcpSocket &socketSender,
-                                 QTcpSocket &socketReceiver)
+                                 QTcpSocket &socketReceiver, QString login)
 {
     //    check log/pass
-    auto client = std::make_unique<Client>(socketClient, socketSender, socketReceiver, count_clients);
+    auto client = std::make_unique<Client>(socketClient, socketSender, socketReceiver, login);
     connect(this, &ClientManager::sendMessageToAll, client.get(), &Client::sendMessage, Qt::QueuedConnection);
     connect(client.get(), &Client::clientDisconnect, this, &ClientManager::clientDisconnected,
             Qt::QueuedConnection);
@@ -22,11 +23,10 @@ void ClientManager::createClient(QTcpSocket &socketClient, QTcpSocket &socketSen
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile,
             Qt::QueuedConnection);
     ThreadPool::getInstance()->addToThread(client.get());
-    clients.insert(std::make_pair(count_clients, std::move(client)));
-    QString num = QString::number(count_clients);
-    uiController.get()->addText(num + " client connected");
-    DB->addUser(num, num + " login", num + " password");
-    count_clients++;
+
+    clients.insert(std::make_pair(login, std::move(client)));
+
+    uiController.get()->addText(login + " connected");
 }
 
 void ClientManager::sendMessageToClients(QString text)
@@ -34,11 +34,16 @@ void ClientManager::sendMessageToClients(QString text)
     emit sendMessageToAll(text);
 }
 
-void ClientManager::clientDisconnected(int id)
+std::shared_ptr<Authenticator> ClientManager::getAuth()
 {
-    auto it = clients.find(id);
+    return auth;
+}
+
+void ClientManager::clientDisconnected(QString login)
+{
+    auto it = clients.find(login);
     it->second.reset();
     clients.erase(it);
-    qDebug() << id << "client disconnected";
-    uiController.get()->addText(QString::number(id) + " client disconnected");
+    qDebug() << login << " disconnected";
+    uiController.get()->addText(login + " client disconnected");
 }

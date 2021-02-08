@@ -19,6 +19,7 @@ public slots:
     void slotNewConnectionClient();
     void slotNewConnectionReceiver();
     void slotNewConnectionSender();
+    void addLogin(QHostAddress ip, QString login);
 private:
     void checkClient();
 
@@ -30,5 +31,6 @@ private:
     };
     QMultiHash<QHostAddress, std::pair<QTcpSocket&, typeSocket>> mapSockets;
     std::shared_ptr<ClientManager> clientManager;
+    QHash<QHostAddress, QString> logins;
 };
 #endif // CONNECTOR_H

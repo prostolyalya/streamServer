@@ -12,16 +12,16 @@ class Client : public QObject
 {
     Q_OBJECT
 public:
-    Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver, int id,
+    Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver, QString _login,
            QObject* parent = nullptr);
     ~Client();
 
-    int getId() const;
+    QString getLogin() const;
 
 private:
     QTcpSocket& socket;
 
-    int id = 0;
+    QString login = "";
     qint64 sizeFile = 0;
     std::unique_ptr<Sender> sender;
     std::unique_ptr<Receiver> receiver;
@@ -42,7 +42,7 @@ public slots:
     void sendMessage(QString text);
 
 signals:
-    void clientDisconnect(int id);
+    void clientDisconnect(QString login);
     void messageReceived(QByteArray msg);
     void sendFileSignal();
 };

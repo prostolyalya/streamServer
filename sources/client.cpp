@@ -1,12 +1,12 @@
 #include "client.h"
 #include "thread_pool.h"
-Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver, int id,
+Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver, QString _login,
                QObject* parent)
     : QObject(parent)
     , socket(_socket)
-    , id(id)
+    , login(_login)
 {
-    current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
+    current_path = QDir::currentPath() + "/" + login + "/";
     QDir().mkdir(current_path);
     connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead, Qt::QueuedConnection);
     connect(&socket, &QTcpSocket::disconnected, this, &Client::slotClientDisconnected, Qt::QueuedConnection);
@@ -18,7 +18,7 @@ Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _sock
 
 Client::~Client()
 {
-    qDebug() << "Client" << id << "deleted";
+    qDebug() << login << " deleted";
 }
 
 void Client::sendMessage(QString text)
@@ -26,9 +26,9 @@ void Client::sendMessage(QString text)
     socket.write(text.toUtf8());
 }
 
-int Client::getId() const
+QString Client::getLogin() const
 {
-    return id;
+    return login;
 }
 
 void Client::saveFile()
@@ -103,14 +103,14 @@ void Client::slotRead()
             requestFileList();
         }
         else
-            emit messageReceived("From " + QByteArray::number(id) + ": " + array);
+            emit messageReceived("From " + login.toLatin1() + ": " + array);
     }
 }
 
 void Client::slotClientDisconnected()
 {
     socket.close();
-    emit clientDisconnect(id);
+    emit clientDisconnect(login);
 }
 
 void Client::fileSent(qint64 size, QString fileName)

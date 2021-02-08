@@ -27,6 +27,7 @@ set(SRC_LIST
     "sources/db_connector.cpp"
     "sources/cryptor.cpp"
     "sources/serializer.cpp"
+    "sources/authentificator.cpp"
 )
 set(HDRS_LIST
     "include/headers/server.h"
@@ -40,9 +41,10 @@ set(HDRS_LIST
     "include/headers/db_connector.h"
     "include/headers/cryptor.h"
     "include/headers/serializer.h"
+    "include/headers/authentificator.h"
     "qml.qrc"
 )
-find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
+find_package(Qt6 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
 #find_package(Boost COMPONENTS thread system REQUIRED)
 #include_directories(include/lib/boost)
 #include_directories(${Boost_INCLUDE_DIR})

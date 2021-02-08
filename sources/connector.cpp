@@ -44,50 +44,54 @@ Connector::Connector(std::shared_ptr<ClientManager> _clientManager, QObject *par
 void Connector::slotNewConnectionClient()
 {
     auto socket = serverClients->nextPendingConnection();
-    mapSockets.insert(socket->peerAddress(), {*socket, typeSocket::CLIENT});
+    mapSockets.insert(socket->peerAddress(), { *socket, typeSocket::CLIENT });
     checkClient();
 }
 
 void Connector::slotNewConnectionReceiver()
 {
     auto socket = serverReceiver->nextPendingConnection();
-    mapSockets.insert(socket->peerAddress(), {*socket, typeSocket::SENDER});
+    mapSockets.insert(socket->peerAddress(), { *socket, typeSocket::SENDER });
     checkClient();
 }
 
 void Connector::slotNewConnectionSender()
 {
     auto socket = serverSender->nextPendingConnection();
-    mapSockets.insert(socket->peerAddress(), {*socket, typeSocket::RECEIVER});
+    mapSockets.insert(socket->peerAddress(), { *socket, typeSocket::RECEIVER });
     checkClient();
+}
+
+void Connector::addLogin(QHostAddress ip, QString login)
+{
+    logins.insert(ip, login);
 }
 
 void Connector::checkClient()
 {
-    if(mapSockets.size() < 3)
+    if (mapSockets.size() < 3)
         return;
     auto list = mapSockets.uniqueKeys();
     for (auto &elem : list)
     {
-        std::vector<std::pair<QTcpSocket&, typeSocket>> vec;
+        std::vector<std::pair<QTcpSocket &, typeSocket>> vec;
         for (auto it = mapSockets.begin(); it != mapSockets.end(); it++)
         {
-            if(it.key() == elem)
+            if (it.key() == elem)
             {
-                vec.push_back({it.value().first, it.value().second});
+                vec.push_back({ it.value().first, it.value().second });
             }
-
         }
-        if(vec.size() == 3)
+        if (vec.size() == 3)
         {
-            QTcpSocket * socClient,*socReceiver,*socSender;
-            for (auto & soc:vec)
+            QTcpSocket *socClient, *socReceiver, *socSender;
+            for (auto &soc : vec)
             {
-                if(soc.second == typeSocket::CLIENT)
+                if (soc.second == typeSocket::CLIENT)
                 {
                     socClient = &soc.first;
                 }
-                else if(soc.second == typeSocket::RECEIVER)
+                else if (soc.second == typeSocket::RECEIVER)
                 {
                     socReceiver = &soc.first;
                 }
@@ -96,7 +100,12 @@ void Connector::checkClient()
                     socSender = &soc.first;
                 }
             }
-            clientManager->createClient(*socClient, *socSender, *socReceiver);
+            auto log = logins.find(socClient->peerAddress());
+            if (log.key() == socClient->peerAddress())
+            {
+                clientManager->createClient(*socClient, *socSender, *socReceiver,
+                                            log.value());
+            }
             mapSockets.remove(elem);
         }
     }

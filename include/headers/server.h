@@ -5,6 +5,7 @@
 #include "thread_pool.h"
 #include "connector.h"
 #include "ui_controller.h"
+#include "authentificator.h"
 #include <QQmlApplicationEngine>
 class Server : public QObject
 {
@@ -12,10 +13,8 @@ class Server : public QObject
 public:
     Server(std::shared_ptr<UiController> _uiController,QQmlApplicationEngine & _engine);
 
-    static bool checkLogin(QString username, QString password);
-
 public slots:
-    void init(QString login, QString pass);
+    void init();
 private:
     QQmlApplicationEngine & engine;
     std::shared_ptr<ClientManager> clientManager;

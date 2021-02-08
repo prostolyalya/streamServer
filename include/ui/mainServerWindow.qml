@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.0
+import QtQuick.Controls 2.12
 
 ApplicationWindow
 {
@@ -16,29 +16,59 @@ ApplicationWindow
         anchors.topMargin: 30
         text: qsTr("Server")
     }
-    TextArea
+    Rectangle
     {
+        id:mainTextArea
         anchors.top: mainText.bottom
         anchors.left: mainText.left
-        id: mainTextArea
         width: 300
         height: 200
-        text: uiController.uiText
+        border.color: "black"
+        border.width: 1
+        color: "#D9DDDC"
+        Flickable
+        {
+            anchors.fill: parent
+            flickableDirection: Flickable.VerticalFlick
+            TextArea.flickable: TextArea
+            {
+                text: uiController.uiText
+                color: "#311432"
+                wrapMode: TextArea.Wrap
+
+            }
+            ScrollBar.vertical: ScrollBar { }
+        }
     }
 
-    TextArea
+    Rectangle
     {
+        id: recInputText
         anchors.top: mainTextArea.bottom
         anchors.left: mainTextArea.left
         anchors.topMargin: 20
-        id: mainInput
         width: 300
         height: 200
+        border.color: "black"
+        border.width: 1
+        color: "#D9DDDC"
+        Flickable
+        {
+            anchors.fill: parent
+            TextArea.flickable: TextArea
+            {
+                id: mainInput
+                color: "#311432"
+                wrapMode: TextArea.Wrap
+
+            }
+            ScrollBar.vertical: ScrollBar { }
+        }
     }
     Rectangle
     {
-       anchors.top: mainInput.top
-       anchors.left: mainInput.right
+       anchors.top: recInputText.top
+       anchors.left: recInputText.right
        width: 50
        height: 20
        Text {

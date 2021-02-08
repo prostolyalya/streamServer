@@ -7,7 +7,6 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     //    qmlRegisterType<UiController>("com.server", 1, 0, "UiController");
     QGuiApplication app(argc, argv);
 

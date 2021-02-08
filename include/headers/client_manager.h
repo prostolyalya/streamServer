@@ -9,23 +9,25 @@
 #include "client.h"
 #include "ui_controller.h"
 #include "db_connector.h"
+#include "authentificator.h"
 
 class ClientManager : public QObject
 {
     Q_OBJECT
 public:
     ClientManager(std::shared_ptr<UiController> ui, QObject *parent = nullptr);
-    void createClient(QTcpSocket &socketClient, QTcpSocket &socketSender, QTcpSocket &socketReceiver);
+    void createClient(QTcpSocket &socketClient, QTcpSocket &socketSender, QTcpSocket &socketReceiver, QString login);
+
+    std::shared_ptr<Authenticator> getAuth();
 
 public slots:
-    void clientDisconnected(int id);
+    void clientDisconnected(QString login);
     void sendMessageToClients(QString text);
-
 private:
     std::shared_ptr<UiController> uiController;
-    std::map<int, std::unique_ptr<Client>> clients;
-    std::unique_ptr<DBConnector> DB;
-    int count_clients = 1;
+    std::shared_ptr<Authenticator> auth;
+    std::map<QString, std::unique_ptr<Client>> clients;
+    std::shared_ptr<DBConnector> DB;
 
 signals:
     void sendMessageToAll(QString text);

@@ -1,6 +1,5 @@
-import QtQuick 2.12
+import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 
@@ -62,7 +61,7 @@ ApplicationWindow
         anchors.topMargin: 40
         width: 100
         height: 35
-        validator: RegExpValidator { regExp: /^[a-z0-9]+$/i }
+        validator: RegularExpressionValidator { regularExpression: /^[a-z0-9]+$/i }
     }
     Text
     {
@@ -83,7 +82,7 @@ ApplicationWindow
         anchors.topMargin: 30
         width: 100
         height: 35
-        validator: RegExpValidator { regExp: /^[a-z0-9]+$/i }
+        validator: RegularExpressionValidator { regularExpression: /^[a-z0-9]+$/i }
     }
 
     Rectangle
