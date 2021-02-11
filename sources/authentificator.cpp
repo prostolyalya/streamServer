@@ -1,6 +1,6 @@
 #include "authentificator.h"
 Authenticator::Authenticator(std::shared_ptr<DBConnector> dbase, QObject *parent)
-    : db(dbase)
+    : QObject(parent), db(dbase)
 {
     serverAuth = std::make_unique<QTcpServer>(this);
     connect(serverAuth.get(), &QTcpServer::newConnection, this,

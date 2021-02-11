@@ -29,16 +29,71 @@ ApplicationWindow
     background: Rectangle {
         color: "gray"
     }
-
+    Rectangle
+    {
+        width: 80
+        height: 20
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 20
+        anchors.bottomMargin: 5
+        border.color: "white"
+        border.width: 1
+        color: "gray"
+        Text {
+            anchors.centerIn: parent
+            color: "yellow"
+            font.bold: true
+            text: qsTr("Reg/Login")
+        }
+        MouseArea
+        {
+            anchors.fill: parent
+            onClicked:
+            {
+                if(titleText.text === "Login")
+                    titleText.text = "Registration"
+                else
+                    titleText.text = "Login"
+            }
+        }
+    }
     Text
     {
+        id: title
         anchors.left: textLogin.left
-        anchors.leftMargin: -10
+        anchors.leftMargin: -70
         anchors.top: parent.top
         font.family: "Helvetica"
-        font.pointSize: 18
+        font.pointSize: 14
         color: "yellow"
         text: qsTr("Server")
+    }
+    Text
+    {
+        id: titleText
+        anchors.left: title.right
+        anchors.leftMargin: 20
+        anchors.top: title.top
+        font.family: "Helvetica"
+        font.pointSize: 16
+        color: "yellow"
+        text: qsTr("Login")
+    }
+    Text {
+        id: errorText
+        text: uiController.uiError
+        font.bold: true
+        font.pixelSize: 24
+        color: "red"
+        anchors.right: titleText.left
+        anchors.top: titleText.top
+        anchors.rightMargin: 5
+        onTextChanged:
+        {
+            if(uiController.uiError === "y")
+                logPassWindow.close()
+        }
     }
     Text
     {
@@ -91,6 +146,7 @@ ApplicationWindow
         border.width: 1
         anchors.top: textPass.bottom
         anchors.left: textPass.left
+        anchors.leftMargin: 30
         anchors.topMargin: 30
         color: "gray"
         width: 55
@@ -112,39 +168,12 @@ ApplicationWindow
                 }
                 else
                 {
-                    uiController.init(textLogin.text , textPass.text)
-                    logPassWindow.close()
+                    if(titleText.text === "Login")
+                        uiController.login(textLogin.text , textPass.text, false)
+                    else
+                        uiController.login(textLogin.text , textPass.text, true)
                 }
 
-            }
-        }
-    }
-    Rectangle
-    {
-        width: 20
-        height: 20
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.leftMargin: 5
-        anchors.bottomMargin: 5
-        border.color: "white"
-        border.width: 1
-        color: "gray"
-        Text {
-            anchors.centerIn: parent
-            color: "yellow"
-            font.bold: true
-            text: qsTr("<")
-        }
-        MouseArea
-        {
-            anchors.fill: parent
-            onClicked:
-            {
-                textLogin.text = ""
-                textPass.text = ""
-                logPassWindow.close()
-                startWindow.show()
             }
         }
     }

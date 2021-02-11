@@ -3,7 +3,9 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QDebug>
 #include "server.h"
+#include "blowfish_crypt.h"
 
 int main(int argc, char *argv[])
 {

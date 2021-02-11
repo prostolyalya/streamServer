@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.17)
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 project(streamServer LANGUAGES CXX)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #set(CMAKE_AUTOUIC ON)
@@ -28,6 +34,7 @@ set(SRC_LIST
     "sources/cryptor.cpp"
     "sources/serializer.cpp"
     "sources/authentificator.cpp"
+    "sources/blowfish_crypt.cpp"
 )
 set(HDRS_LIST
     "include/headers/server.h"
@@ -42,8 +49,11 @@ set(HDRS_LIST
     "include/headers/cryptor.h"
     "include/headers/serializer.h"
     "include/headers/authentificator.h"
+    "include/headers/blowfish_crypt.h"
     "qml.qrc"
 )
+
+set(CMAKE_PREFIX_PATH "/home/ykulevskyi/Qt/6.0.0/gcc_64/lib/cmake")
 find_package(Qt6 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
 #find_package(Boost COMPONENTS thread system REQUIRED)
 #include_directories(include/lib/boost)
@@ -53,7 +63,8 @@ add_executable(streamServer
   ${SRC_LIST}
   ${HDRS_LIST}
 )
-target_compile_definitions(streamServer
-  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+
+#target_compile_definitions(streamServer
+#  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(streamServer Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets Qt::Sql )#${Boost_LIBRARIES}
 target_include_directories(streamServer PUBLIC include)

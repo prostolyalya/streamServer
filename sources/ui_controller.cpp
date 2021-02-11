@@ -15,6 +15,30 @@ void UiController::addText(QString text)
     emit textServerChanged();
 }
 
+void UiController::loginComplete(bool complete)
+{
+    if (complete)
+    {
+        setErrorText("y");
+        emit errorTextChanged();
+    }
+    else
+    {
+        setErrorText("X");
+        emit errorTextChanged();
+    }
+}
+
+QString UiController::getErrorText() const
+{
+    return errorText;
+}
+
+void UiController::setErrorText(const QString &value)
+{
+    errorText = value;
+}
+
 QString UiController::getText() const
 {
     return textServer;
@@ -24,4 +48,3 @@ void UiController::setText(const QString &value)
 {
     textServer = value;
 }
-

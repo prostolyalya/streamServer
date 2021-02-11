@@ -84,7 +84,7 @@ void Connector::checkClient()
         }
         if (vec.size() == 3)
         {
-            QTcpSocket *socClient, *socReceiver, *socSender;
+            QTcpSocket *socClient = nullptr, *socReceiver = nullptr, *socSender = nullptr;
             for (auto &soc : vec)
             {
                 if (soc.second == typeSocket::CLIENT)
@@ -105,6 +105,7 @@ void Connector::checkClient()
             {
                 clientManager->createClient(*socClient, *socSender, *socReceiver,
                                             log.value());
+                logins.remove(log.key());
             }
             mapSockets.remove(elem);
         }

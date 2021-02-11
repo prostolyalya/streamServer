@@ -13,8 +13,11 @@ class Server : public QObject
 public:
     Server(std::shared_ptr<UiController> _uiController,QQmlApplicationEngine & _engine);
 
-public slots:
     void init();
+public slots:
+    void login(QString login, QString password, bool reg);
+signals:
+    void loginComplete(bool complete);
 private:
     QQmlApplicationEngine & engine;
     std::shared_ptr<ClientManager> clientManager;
