@@ -12,8 +12,8 @@ class Client : public QObject
 {
     Q_OBJECT
 public:
-    Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver, QString _login,
-           QObject* parent = nullptr);
+    Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver,
+           QString _login, QObject* parent = nullptr);
     ~Client();
 
     QString getLogin() const;
@@ -28,9 +28,9 @@ private:
 
     QString current_path;
     QString fileName = "";
+    bool isPrivateFile = true;
 
     void saveFile();
-    void requestFileList();
 
 public:
     void connecting();
@@ -40,10 +40,12 @@ public slots:
     void fileSent(qint64 size, QString fileName);
     void sendFile(QString path);
     void sendMessage(QString text);
-
+    void requestFileList(QStringList pubFiles);
 signals:
     void clientDisconnect(QString login);
     void messageReceived(QByteArray msg);
     void sendFileSignal();
+    void addFileToDB(QString login, QString filename, bool isPrivate);
+    void requestPubFiles();
 };
 #endif // CLIENT_H

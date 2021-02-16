@@ -10,8 +10,7 @@ class Connector : public QObject
 {
     Q_OBJECT
 public:
-    explicit Connector(std::shared_ptr<ClientManager> _clientManager,
-                       QObject *parent = 0);
+    explicit Connector(QObject *parent = 0);
     std::unique_ptr<QTcpServer> serverClients;
     std::unique_ptr<QTcpServer> serverReceiver;
     std::unique_ptr<QTcpServer> serverSender;
@@ -20,6 +19,10 @@ public slots:
     void slotNewConnectionReceiver();
     void slotNewConnectionSender();
     void addLogin(QHostAddress ip, QString login);
+signals:
+    void addClient(QTcpSocket *socketClient, QTcpSocket *socketSender,
+                   QTcpSocket *socketReceiver, QString login);
+
 private:
     void checkClient();
 
@@ -29,8 +32,10 @@ private:
         SENDER,
         RECEIVER
     };
-    QMultiHash<QHostAddress, std::pair<QTcpSocket&, typeSocket>> mapSockets;
-    std::shared_ptr<ClientManager> clientManager;
+    QHash<QHostAddress, QTcpSocket *> socketsClient;
+    QHash<QHostAddress, QTcpSocket *> socketsSender;
+    QHash<QHostAddress, QTcpSocket *> socketsReceiver;
+
     QHash<QHostAddress, QString> logins;
 };
 #endif // CONNECTOR_H

@@ -9,23 +9,26 @@ Server::Server(std::shared_ptr<UiController> _uiController,
 
 {
     connect(uiController.get(), &UiController::login, this, &Server::login);
-    connect(this, &Server::loginComplete, uiController.get(), &UiController::loginComplete);
+    connect(this, &Server::loginComplete, uiController.get(),
+            &UiController::loginComplete);
 }
 
 void Server::init()
 {
     engine.load(QStringLiteral("qrc:/include/ui/mainServerWindow.qml"));
     threadPool = std::make_unique<ThreadPool>();
-    clientManager = std::make_shared<ClientManager>(uiController);
-    connector = std::make_unique<Connector>(clientManager);
+    clientManager = std::make_unique<ClientManager>(uiController);
+    connector = std::make_unique<Connector>();
 
     connect(clientManager.get()->getAuth().get(), &Authenticator::loginComplete,
             connector.get(), &Connector::addLogin);
+    connect(connector.get(), &Connector::addClient, clientManager.get(),
+            &ClientManager::createClient, Qt::QueuedConnection);
 }
 
 void Server::login(QString login, QString password, bool reg)
 {
-    if(!QFile().exists("profile") && !reg)
+    if (!QFile().exists("profile") && !reg)
     {
         emit loginComplete(false);
         return;
@@ -58,7 +61,6 @@ void Server::login(QString login, QString password, bool reg)
             file.close();
             return;
         }
-
     }
     emit loginComplete(false);
 }

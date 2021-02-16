@@ -1,19 +1,22 @@
 #include "client.h"
 #include "thread_pool.h"
-Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver, QString _login,
-               QObject* parent)
+Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender,
+               QTcpSocket& _socketReceiver, QString _login, QObject* parent)
     : QObject(parent)
     , socket(_socket)
     , login(_login)
 {
     current_path = QDir::currentPath() + "/" + login + "/";
     QDir().mkdir(current_path);
-    connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead, Qt::QueuedConnection);
-    connect(&socket, &QTcpSocket::disconnected, this, &Client::slotClientDisconnected, Qt::QueuedConnection);
+    connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead,
+            Qt::QueuedConnection);
+    connect(&socket, &QTcpSocket::disconnected, this, &Client::slotClientDisconnected,
+            Qt::QueuedConnection);
     sender = std::make_unique<Sender>(_socketSender);
     receiver = std::make_unique<Receiver>(_socketReceiver, current_path + "tmp");
     connect(sender.get(), &Sender::fileSent, this, &Client::fileSent);
-    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile, Qt::QueuedConnection);
+    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile,
+            Qt::QueuedConnection);
 }
 
 Client::~Client()
@@ -49,7 +52,9 @@ void Client::saveFile()
         {
 
             file.rename(current_path + fileName);
-            emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
+            emit addFileToDB(login, fileName, isPrivateFile);
+            emit messageReceived("File received: " + current_path.toUtf8()
+                                 + fileName.toUtf8());
         }
         else
         {
@@ -61,7 +66,7 @@ void Client::saveFile()
     }
 }
 
-void Client::requestFileList()
+void Client::requestFileList(QStringList pubFiles)
 {
     qDebug() << "request file list";
     QDir dir(current_path);
@@ -72,6 +77,16 @@ void Client::requestFileList()
         if (name == "." || name == "..")
             continue;
         data += "/" + name.toUtf8();
+    }
+    if (!pubFiles.isEmpty())
+    {
+        data.append("&");
+        for (auto& name : pubFiles)
+        {
+            if (name == "." || name == "..")
+                continue;
+            data += "//" + name.toUtf8();
+        }
     }
     socket.write(data);
 }
@@ -87,20 +102,33 @@ void Client::slotRead()
             QByteArray data = list.at(1);
             fileName = list.at(2);
             sizeFile = data.toInt();
+            isPrivateFile = list.at(3).toInt();
             QTimer::singleShot(1000, this, &Client::saveFile);
         }
         else if (array.startsWith("request_file"))
         {
             QByteArrayList list = array.split('/');
-            QByteArray data = list.at(1);
-            if (QFile::exists(current_path + data))
+            if (list.size() > 2)
             {
-                sendFile(current_path + data);
+                QByteArray data = list.at(2);
+                QString path = QDir::currentPath() + "/" + list.at(1) + "/" + data;
+                if (QFile::exists(path))
+                {
+                    sendFile(path);
+                }
+            }
+            else
+            {
+                QByteArray data = list.at(1);
+                if (QFile::exists(current_path + data))
+                {
+                    sendFile(current_path + data);
+                }
             }
         }
         else if (array.startsWith("request_list_file"))
         {
-            requestFileList();
+            emit requestPubFiles();
         }
         else
             emit messageReceived("From " + login.toLatin1() + ": " + array);

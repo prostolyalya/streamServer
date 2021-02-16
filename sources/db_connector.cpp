@@ -1,6 +1,7 @@
 #include "db_connector.h"
 
-DBConnector::DBConnector(QString dbName)
+DBConnector::DBConnector(QString dbName, QObject *parent)
+    : QObject(parent)
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbName);
@@ -13,14 +14,12 @@ DBConnector::DBConnector(QString dbName)
                              "user_password   TEXT ); "));
         query.exec(QString("CREATE TABLE IF NOT EXISTS " + tableName2
                            + " ("
-                             "user_login      TEXT, "
-                             "video_name   TEXT, "
-                             "video_path   TEXT ); "));
+                             "user_login   TEXT, "
+                             "filename     TEXT ); "));
         query.exec(QString("CREATE TABLE IF NOT EXISTS " + tableName3
                            + " ("
-                             "user_login      TEXT, "
-                             "audio_name   TEXT, "
-                             "audio_path   TEXT ); "));
+                             "user_login   TEXT, "
+                             "filename     TEXT ); "));
         db.close();
     }
     else
@@ -35,11 +34,11 @@ bool DBConnector::findUser(QString login)
     if (db.open())
     {
         QSqlQuery query;
-        if (query.exec("SELECT user_login FROM " + tableName1
-                       + " WHERE user_login = '" + login + "';"))
+        if (query.exec("SELECT user_login FROM " + tableName1 + " WHERE user_login = '"
+                       + login + "';"))
         {
             auto res = query.next();
-            if(res)
+            if (res)
                 find = true;
         }
         db.close();
@@ -71,14 +70,50 @@ bool DBConnector::loginUser(QString login, QString password)
     {
         QSqlQuery query;
         if (query.exec("SELECT user_login, user_password FROM " + tableName1
-                       + " WHERE user_login = '" + login
-                       + "' AND user_password = '" + password + "';"))
+                       + " WHERE user_login = '" + login + "' AND user_password = '"
+                       + password + "';"))
         {
             auto res = query.next();
-            if(res)
+            if (res)
                 find = true;
         }
         db.close();
     }
     return find;
+}
+
+void DBConnector::addFile(QString login, QString filename, bool isPrivate)
+{
+    QString tableName = isPrivate ? tableName3 : tableName2;
+    if (db.open())
+    {
+        QString insert = "INSERT INTO " + tableName
+            + "(user_login, filename) "
+              "VALUES ('"
+            + login + "', '" + filename + "');";
+        QSqlQuery query;
+        query.exec(insert);
+        qDebug() << db.lastError().text();
+        db.close();
+    }
+}
+
+void DBConnector::requestPubFiles()
+{
+    QStringList res;
+    if (db.open())
+    {
+        QSqlQuery query;
+        if (query.exec("SELECT * FROM " + tableName2 + " ;"))
+        {
+            while (query.next())
+            {
+                QString login = query.value(0).toString();
+                QString file = query.value(1).toString();
+                res.append(login + "/" + file);
+            }
+        }
+        db.close();
+    }
+    emit responsePubFiles(res);
 }

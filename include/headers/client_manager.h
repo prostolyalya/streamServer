@@ -16,13 +16,15 @@ class ClientManager : public QObject
     Q_OBJECT
 public:
     ClientManager(std::shared_ptr<UiController> ui, QObject *parent = nullptr);
-    void createClient(QTcpSocket &socketClient, QTcpSocket &socketSender, QTcpSocket &socketReceiver, QString login);
 
     std::shared_ptr<Authenticator> getAuth();
 
 public slots:
     void clientDisconnected(QString login);
     void sendMessageToClients(QString text);
+    void createClient(QTcpSocket *socketClient, QTcpSocket *socketSender,
+                      QTcpSocket *socketReceiver, QString login);
+
 private:
     std::shared_ptr<UiController> uiController;
     std::shared_ptr<Authenticator> auth;
