@@ -53,8 +53,8 @@ set(HDRS_LIST
     "qml.qrc"
 )
 
-set(CMAKE_PREFIX_PATH "/home/ykulevskyi/Qt/6.0.0/gcc_64/lib/cmake")
-find_package(Qt6 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
+#set(CMAKE_PREFIX_PATH "/home/Qt/6.0.0/gcc_64/lib/cmake")
+find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
 #find_package(Boost COMPONENTS thread system REQUIRED)
 #include_directories(include/lib/boost)
 #include_directories(${Boost_INCLUDE_DIR})

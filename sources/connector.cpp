@@ -95,44 +95,4 @@ void Connector::checkClient()
             socketsClient.remove(it.key());
         }
     }
-
-    //    auto list = mapSockets.uniqueKeys();
-    //    for (auto &elem : list)
-    //    {
-    //        std::vector<std::pair<QTcpSocket &, typeSocket>> vec;
-    //        for (auto it = mapSockets.begin(); it != mapSockets.end(); it++)
-    //        {
-    //            if (it.key() == elem)
-    //            {
-    //                vec.push_back({ it.value().first, it.value().second });
-    //            }
-    //        }
-    //        if (vec.size() == 3)
-    //        {
-    //            QTcpSocket *socClient = nullptr, *socReceiver = nullptr, *socSender =
-    //            nullptr; for (auto &soc : vec)
-    //            {
-    //                if (soc.second == typeSocket::CLIENT)
-    //                {
-    //                    socClient = &soc.first;
-    //                }
-    //                else if (soc.second == typeSocket::RECEIVER)
-    //                {
-    //                    socReceiver = &soc.first;
-    //                }
-    //                else
-    //                {
-    //                    socSender = &soc.first;
-    //                }
-    //            }
-    //            auto log = logins.find(socClient->peerAddress());
-    //            if (log.key() == socClient->peerAddress())
-    //            {
-    //                clientManager->createClient(*socClient, *socSender, *socReceiver,
-    //                                            log.value());
-    //                logins.remove(log.key());
-    //            }
-    //            mapSockets.remove(elem);
-    //        }
-    //    }
 }
