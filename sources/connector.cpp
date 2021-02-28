@@ -38,6 +38,12 @@ Connector::Connector(QObject *parent)
     {
         qDebug() << "serverSender is started";
     }
+    const QHostAddress& localhost = QHostAddress( QHostAddress::LocalHost );
+        for ( const QHostAddress& address : QNetworkInterface::allAddresses( ) )
+        {
+            if ( address.protocol( ) == QAbstractSocket::IPv4Protocol && address != localhost )
+                qDebug( ) << address.toString( );
+        }
 }
 
 void Connector::slotNewConnectionClient()
