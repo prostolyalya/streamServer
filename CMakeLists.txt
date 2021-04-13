@@ -50,11 +50,10 @@ set(HDRS_LIST
     "include/headers/serializer.h"
     "include/headers/authentificator.h"
     "include/headers/blowfish_crypt.h"
-    "qml.qrc"
 )
 
 #set(CMAKE_PREFIX_PATH "/home/Qt/6.0.0/gcc_64/lib/cmake")
-find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
+find_package(Qt5 COMPONENTS Core Network Quick Sql REQUIRED)
 #find_package(Boost COMPONENTS thread system REQUIRED)
 #include_directories(include/lib/boost)
 #include_directories(${Boost_INCLUDE_DIR})
@@ -66,5 +65,5 @@ add_executable(streamServer
 
 #target_compile_definitions(streamServer
 #  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(streamServer Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets Qt::Sql )#${Boost_LIBRARIES}
+target_link_libraries(streamServer Qt::Core Qt::Network Qt::Quick Qt::Sql )#${Boost_LIBRARIES}
 target_include_directories(streamServer PUBLIC include)

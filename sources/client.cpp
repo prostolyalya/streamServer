@@ -153,6 +153,4 @@ void Client::sendFile(QString path)
     emit messageReceived("Request file: " + path.toUtf8());
     sender.get()->setFile_path(path);
     emit sendFileSignal();
-    //    auto f = std::bind(&Sender::sendFileSignal, sender.get());
-    //    ThreadPool::getInstance()->addToThread(f);
 }

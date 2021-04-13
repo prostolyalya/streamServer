@@ -2,21 +2,21 @@
 #include "cryptor.h"
 #include "blowfish_crypt.h"
 
-Server::Server(std::shared_ptr<UiController> _uiController,
-               QQmlApplicationEngine& _engine)
-    : engine(_engine)
-    , uiController(_uiController)
+Server::Server(std::shared_ptr<UiController> _uiController)
+    :  uiController(_uiController)
 
 {
     connect(uiController.get(), &UiController::login, this, &Server::login);
     connect(this, &Server::loginComplete, uiController.get(),
             &UiController::loginComplete);
+    uiController->startLogin();
+
 }
 
 void Server::init()
 {
-    engine.load(QStringLiteral("qrc:/include/ui/mainServerWindow.qml"));
     threadPool = std::make_unique<ThreadPool>();
+    threadPool->addToThread(this);
     clientManager = std::make_unique<ClientManager>(uiController);
     connector = std::make_unique<Connector>();
 
@@ -40,12 +40,12 @@ void Server::login(QString login, QString password, bool reg)
         {
             QFile().remove("profile");
         }
-        QFile file("profile");
-        file.open(QIODevice::WriteOnly);
+        QFile file2("profile");
+        file2.open(QIODevice::WriteOnly);
         QByteArray data = login.toUtf8() + password.toUtf8() + "streamServer";
         data = BlowFish::encrypt(data, login.toUtf8() + password.toUtf8());
-        file.write(data);
-        file.close();
+        file2.write(data);
+        file2.close();
         emit loginComplete(true);
         init();
         return;

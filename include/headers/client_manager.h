@@ -21,7 +21,6 @@ public:
 
 public slots:
     void clientDisconnected(QString login);
-    void sendMessageToClients(QString text);
     void createClient(QTcpSocket *socketClient, QTcpSocket *socketSender,
                       QTcpSocket *socketReceiver, QString login);
 

@@ -3,8 +3,7 @@ Authenticator::Authenticator(std::shared_ptr<DBConnector> dbase, QObject *parent
     : QObject(parent), db(dbase)
 {
     serverAuth = std::make_unique<QTcpServer>(this);
-    connect(serverAuth.get(), &QTcpServer::newConnection, this,
-            &Authenticator::slotNewConnection);
+    connect(serverAuth.get(), &QTcpServer::newConnection, this, &Authenticator::slotNewConnection);
     if (!serverAuth->listen(QHostAddress::Any, 6003))
     {
         qDebug() << "serverAuth is not started";
@@ -22,13 +21,12 @@ void Authenticator::slotNewConnection()
             Qt::QueuedConnection);
     connect(socket, &QTcpSocket::disconnected, this,
             &Authenticator::slotClientDisconnected, Qt::QueuedConnection);
-    qDebug() << "new auth";
+    qDebug() << "new authentification " << socket->peerAddress();
     sockets.push_back(socket);
 }
 
 void Authenticator::slotRead()
 {
-    qDebug() << "slotRead";
     QTcpSocket *socket = static_cast<QTcpSocket *>(QObject::sender());
     while (socket->bytesAvailable() > 0)
     {
@@ -36,7 +34,6 @@ void Authenticator::slotRead()
         QByteArrayList list = array.split('/');
         QByteArray login = list.at(1);
         QByteArray pass = list.at(2);
-        qDebug() << "";
         if (list.at(0) == "login_user")
         {
             qDebug() << "login_user";
@@ -44,12 +41,12 @@ void Authenticator::slotRead()
             {
                 if (db.get()->loginUser(login, pass))
                 {
-                    emit loginComplete(socket->peerAddress() ,login);
+                    emit loginComplete(socket->peerAddress(), login);
                     socket->write("login_ok");
                     qDebug() << "login_ok";
                     return;
                 }
-                 qDebug() << "login2_failed";
+                qDebug() << "login2_failed";
             }
             qDebug() << "login_failed";
             socket->write("login_failed");

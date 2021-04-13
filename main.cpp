@@ -1,24 +1,14 @@
 #include <QGuiApplication>
-#include <qqml.h>
 #include <QObject>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
 #include <QDebug>
 #include "server.h"
-#include "blowfish_crypt.h"
 
 int main(int argc, char *argv[])
 {
-    //    qmlRegisterType<UiController>("com.server", 1, 0, "UiController");
     QGuiApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
     auto uiController = std::make_shared<UiController>();
-    auto server = std::make_unique<Server>(uiController, engine);
-    engine.rootContext()->setContextProperty("uiController",
-                                             uiController.get());
-    const QUrl url(QStringLiteral("qrc:/include/ui/startWindow.qml"));
-    engine.load(url);
+    auto server = std::make_unique<Server>(uiController);
 
     return app.exec();
 }
