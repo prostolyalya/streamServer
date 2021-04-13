@@ -33,7 +33,7 @@ void Sender::sendFile()
         {
             file.seek(pos);
             QByteArray data = file.read(size);
-            while (socket.waitForReadyRead(5)) { }
+            while (socket.waitForBytesWritten(1)) { }
             socket.write(data);
         }
     }
