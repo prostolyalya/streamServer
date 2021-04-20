@@ -1,11 +1,14 @@
 #include "client_manager.h"
 #include "thread_pool.h"
+#include "utils.h"
+
 ClientManager::ClientManager(std::shared_ptr<UiController> ui, QObject *parent)
     : QObject(parent)
     , uiController(ui)
 {
     DB = std::make_shared<DBConnector>("clients", this);
     auth = std::make_shared<Authenticator>(DB);
+    Utils::filePath = QDir::currentPath() + "/";
 }
 
 void ClientManager::createClient(QTcpSocket *socketClient, QTcpSocket *socketSender,
@@ -42,6 +45,5 @@ void ClientManager::clientDisconnected(QString login)
     auto it = clients.find(login);
     it->second.reset();
     clients.erase(it);
-    qDebug() << login << " disconnected";
-    uiController.get()->addText(login + " disconnected");
+    Utils::log(login + " disconnected");
 }

@@ -7,7 +7,6 @@
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 #include <QSqlError>
-#include <QDebug>
 
 class DBConnector : public QObject
 {

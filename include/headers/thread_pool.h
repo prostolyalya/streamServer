@@ -11,13 +11,14 @@ public:
     ThreadPool();
     ~ThreadPool();
     void addToThread(std::function<void()> fun);
-    static ThreadPool *instance;
+
     static ThreadPool *getInstance();
     QThread* addToThread(QObject *object);
 
 private:
     //    QThreadPool *pool = nullptr;
     std::set<QThread *> pool;
+    static ThreadPool *instance;
 };
 
 #endif // THREAD_POOL_H

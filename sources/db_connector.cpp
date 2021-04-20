@@ -1,4 +1,5 @@
 #include "db_connector.h"
+#include "utils.h"
 
 DBConnector::DBConnector(QString dbName, QObject *parent)
     : QObject(parent)
@@ -24,7 +25,7 @@ DBConnector::DBConnector(QString dbName, QObject *parent)
     }
     else
     {
-        qDebug() << db.lastError().text();
+        Utils::log(db.lastError().text());
     }
 }
 
@@ -93,7 +94,7 @@ void DBConnector::addFile(QString login, QString filename, bool isPrivate)
             + login + "', '" + filename + "');";
         QSqlQuery query;
         query.exec(insert);
-        qDebug() << db.lastError().text();
+        Utils::log(db.lastError().text());
         db.close();
     }
 }

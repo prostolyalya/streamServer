@@ -1,7 +1,8 @@
-#include "headers/connector.h"
+#include "connector.h"
+#include "utils.h"
 #include <QCoreApplication>
 #include <set>
-Connector::Connector(QObject *parent)
+Connector::Connector(QObject* parent)
     : QObject(parent)
 {
     serverClients = std::make_unique<QTcpServer>(this);
@@ -16,34 +17,40 @@ Connector::Connector(QObject *parent)
 
     if (!serverClients->listen(QHostAddress::Any, 6000))
     {
-        qDebug() << "serverClients is not started";
+        Utils::log("serverClients is not started");
     }
     else
     {
-        qDebug() << "serverClients is started";
+        Utils::log("serverClients is started");
     }
     if (!serverReceiver->listen(QHostAddress::Any, 6001))
     {
-        qDebug() << "serverReceiver is not started";
+        Utils::log("serverReceiver is not started");
     }
     else
     {
-        qDebug() << "serverReceiver is started";
+        Utils::log("serverReceiver is started");
     }
     if (!serverSender->listen(QHostAddress::Any, 6002))
     {
-        qDebug() << "serverSender is not started";
+        Utils::log("serverSender is not started");
     }
     else
     {
-        qDebug() << "serverSender is started";
+        Utils::log("serverSender is started");
     }
-    const QHostAddress& localhost = QHostAddress( QHostAddress::LocalHost );
-        for ( const QHostAddress& address : QNetworkInterface::allAddresses( ) )
+    const QHostAddress& localhost = QHostAddress(QHostAddress::LocalHost);
+    for (const QHostAddress& address : QNetworkInterface::allAddresses())
+    {
+        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
         {
-            if ( address.protocol( ) == QAbstractSocket::IPv4Protocol && address != localhost )
-                qDebug( ) << address.toString( );
+            const auto addr = address.toString();
+            if (addr.startsWith("192.168"))
+                Utils::log(addr + " - Local address");
+            else
+                Utils::log(addr + " - Global address");
         }
+    }
 }
 
 void Connector::slotNewConnectionClient()

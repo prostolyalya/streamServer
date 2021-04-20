@@ -16,7 +16,6 @@ class ClientManager : public QObject
     Q_OBJECT
 public:
     ClientManager(std::shared_ptr<UiController> ui, QObject *parent = nullptr);
-
     std::shared_ptr<Authenticator> getAuth();
 
 public slots:

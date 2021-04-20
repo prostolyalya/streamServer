@@ -1,11 +1,10 @@
-#include <QGuiApplication>
+#include <QCoreApplication>
 #include <QObject>
-#include <QDebug>
 #include "server.h"
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
 
     auto uiController = std::make_shared<UiController>();
     auto server = std::make_unique<Server>(uiController);

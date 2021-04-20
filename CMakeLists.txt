@@ -35,6 +35,7 @@ set(SRC_LIST
     "sources/serializer.cpp"
     "sources/authentificator.cpp"
     "sources/blowfish_crypt.cpp"
+    "sources/utils.cpp"
 )
 set(HDRS_LIST
     "include/headers/server.h"
@@ -50,6 +51,7 @@ set(HDRS_LIST
     "include/headers/serializer.h"
     "include/headers/authentificator.h"
     "include/headers/blowfish_crypt.h"
+    "include/headers/utils.h"
 )
 
 find_package(QT NAMES Qt5 COMPONENTS Core Network Quick Sql REQUIRED)

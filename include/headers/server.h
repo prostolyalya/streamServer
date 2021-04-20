@@ -6,13 +6,13 @@
 #include "connector.h"
 #include "ui_controller.h"
 #include "authentificator.h"
-
+#include "utils.h"
 class Server : public QObject
 {
     Q_OBJECT
 public:
     Server(std::shared_ptr<UiController> _uiController);
-
+    ~Server();
     void init();
 public slots:
     void login(QString login, QString password, bool reg);

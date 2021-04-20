@@ -1,12 +1,14 @@
 #include "client.h"
 #include "thread_pool.h"
+#include "utils.h"
+
 Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender,
                QTcpSocket& _socketReceiver, QString _login, QObject* parent)
     : QObject(parent)
     , socket(_socket)
     , login(_login)
 {
-    current_path = QDir::currentPath() + "/" + login + "/";
+    current_path = Utils::filePath + login + "/";
     QDir().mkdir(current_path);
     connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead,
             Qt::QueuedConnection);
@@ -21,7 +23,7 @@ Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender,
 
 Client::~Client()
 {
-    qDebug() << login << " deleted";
+    Utils::log(login + " deleted");
 }
 
 void Client::sendMessage(QString text)
@@ -68,7 +70,7 @@ void Client::saveFile()
 
 void Client::requestFileList(QStringList pubFiles)
 {
-    qDebug() << "request file list";
+    Utils::log("request file list " + login);
     QDir dir(current_path);
     QStringList list = dir.entryList();
     QByteArray data = "response_list_file&";
@@ -149,7 +151,7 @@ void Client::fileSent(qint64 size, QString fileName)
 
 void Client::sendFile(QString path)
 {
-    qDebug() << "request file";
+    Utils::log("request file " + path + " " + login);
     emit messageReceived("Request file: " + path.toUtf8());
     sender.get()->setFile_path(path);
     emit sendFileSignal();

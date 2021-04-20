@@ -1,16 +1,19 @@
 #include "authentificator.h"
+#include "utils.h"
 Authenticator::Authenticator(std::shared_ptr<DBConnector> dbase, QObject *parent)
-    : QObject(parent), db(dbase)
+    : QObject(parent)
+    , db(dbase)
 {
     serverAuth = std::make_unique<QTcpServer>(this);
-    connect(serverAuth.get(), &QTcpServer::newConnection, this, &Authenticator::slotNewConnection);
+    connect(serverAuth.get(), &QTcpServer::newConnection, this,
+            &Authenticator::slotNewConnection);
     if (!serverAuth->listen(QHostAddress::Any, 6003))
     {
-        qDebug() << "serverAuth is not started";
+        Utils::log("serverAuth is not started");
     }
     else
     {
-        qDebug() << "serverAuth is started";
+        Utils::log("serverAuth is started");
     }
 }
 
@@ -21,7 +24,6 @@ void Authenticator::slotNewConnection()
             Qt::QueuedConnection);
     connect(socket, &QTcpSocket::disconnected, this,
             &Authenticator::slotClientDisconnected, Qt::QueuedConnection);
-    qDebug() << "new authentification " << socket->peerAddress();
     sockets.push_back(socket);
 }
 
@@ -34,38 +36,39 @@ void Authenticator::slotRead()
         QByteArrayList list = array.split('/');
         QByteArray login = list.at(1);
         QByteArray pass = list.at(2);
+        QString log_string = " " + login + " "
+            + socket->peerAddress().toString().right(7);
         if (list.at(0) == "login_user")
         {
-            qDebug() << "login_user";
+            Utils::log("login_user" + log_string);
             if (db.get()->findUser(login))
             {
                 if (db.get()->loginUser(login, pass))
                 {
                     emit loginComplete(socket->peerAddress(), login);
                     socket->write("login_ok");
-                    qDebug() << "login_ok";
+                    Utils::log("login_ok" + log_string);
                     return;
                 }
-                qDebug() << "login2_failed";
             }
-            qDebug() << "login_failed";
+            Utils::log("login_failed" + log_string);
             socket->write("login_failed");
             return;
         }
         else if (list.at(0) == "registration_user")
         {
-            qDebug() << "registration_user";
+            Utils::log("registration_user " + log_string);
             if (!db.get()->findUser(login))
             {
                 if (db.get()->addUser(login, pass))
                 {
                     emit loginComplete(socket->peerAddress(), login);
                     socket->write("registration_ok");
-                    qDebug() << "registration_ok";
+                    Utils::log("registration_ok " + log_string);
                     return;
                 }
             }
-            qDebug() << "registration_failed";
+            Utils::log("registration_failed " + log_string);
             socket->write("registration_failed");
             return;
         }

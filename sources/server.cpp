@@ -3,14 +3,19 @@
 #include "blowfish_crypt.h"
 
 Server::Server(std::shared_ptr<UiController> _uiController)
-    :  uiController(_uiController)
+    : uiController(_uiController)
 
 {
+    Utils::log("------------- Start Stream Server -------------");
     connect(uiController.get(), &UiController::login, this, &Server::login);
     connect(this, &Server::loginComplete, uiController.get(),
             &UiController::loginComplete);
     uiController->startLogin();
+}
 
+Server::~Server()
+{
+    Utils::log("------------- Shutdown Stream Server -------------");
 }
 
 void Server::init()
