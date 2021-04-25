@@ -55,15 +55,16 @@ set(HDRS_LIST
 )
 
 find_package(QT NAMES Qt5 COMPONENTS Core Network Quick Sql REQUIRED)
-
+find_package(Boost COMPONENTS program_options system REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Quick Sql REQUIRED)
 #find_package(Qt5 COMPONENTS Core Network Quick Sql REQUIRED)
 
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 add_executable(streamServer
   main.cpp
   ${SRC_LIST}
   ${HDRS_LIST}
 )
 
-target_link_libraries(streamServer Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Sql )
+target_link_libraries(streamServer Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Sql ${Boost_LIBRARIES})
 target_include_directories(streamServer PUBLIC include)

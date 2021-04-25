@@ -10,12 +10,12 @@ class UiController : public QObject
 public:
     UiController(QObject* parent = nullptr);
     ~UiController();
-    void startLogin();
+    void startLogin(QString path);
 signals:
     void login(QString login, QString pass, bool reg);
 public slots:
     void addText(QString text);
-    void loginComplete(bool complete);
+    void loginComplete(bool complete, QString path);
 };
 
 #endif // UI_CONTROLLER_H

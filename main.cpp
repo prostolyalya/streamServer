@@ -4,6 +4,10 @@
 
 int main(int argc, char *argv[])
 {
+    if (Utils::checkOptions(argc, argv))
+    {
+        return 0;
+    }
     QCoreApplication app(argc, argv);
 
     auto uiController = std::make_shared<UiController>();

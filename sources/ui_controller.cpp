@@ -19,7 +19,7 @@ void UiController::addText(QString text)
     Utils::log(text);
 }
 
-void UiController::loginComplete(bool complete)
+void UiController::loginComplete(bool complete, QString path)
 {
     if (complete)
     {
@@ -28,13 +28,13 @@ void UiController::loginComplete(bool complete)
     else
     {
         Utils::log("Login incorrect");
-        startLogin();
+        startLogin(path);
     }
 }
 
-void UiController::startLogin()
+void UiController::startLogin(QString path)
 {
-    bool reg = !QFile::exists("profile");
+    bool reg = !QFile::exists(path + "profile");
     if(reg)
     {
         Utils::log("Welcome to Stream Server, please input your login and password");

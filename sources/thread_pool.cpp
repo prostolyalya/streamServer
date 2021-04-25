@@ -2,7 +2,8 @@
 
 ThreadPool* ThreadPool::instance = nullptr;
 
-ThreadPool::ThreadPool()
+ThreadPool::ThreadPool(QObject *parent)
+    :QObject(parent)
 {
     //    pool = new QThreadPool();
     //    uint8_t count_threads = std::thread::hardware_concurrency();

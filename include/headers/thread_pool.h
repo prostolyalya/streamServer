@@ -8,7 +8,7 @@ class ThreadPool : public QObject
 {
     Q_OBJECT
 public:
-    ThreadPool();
+    ThreadPool(QObject * parent = nullptr);
     ~ThreadPool();
     void addToThread(std::function<void()> fun);
 

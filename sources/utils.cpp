@@ -3,16 +3,20 @@
 #include <QFile>
 #include <iostream>
 #include <QDir>
+
+#include <boost/program_options.hpp>
+
+namespace po = boost::program_options;
+
 void Utils::log(const QString message)
 {
-    const auto time =
-        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    const auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     QString time_in = std::ctime(&time);
     time_in.chop(6);
     QString message_in = "[" + time_in + "] " + message;
     std::cout << message_in.toStdString() << std::endl;
     QFile file("logs.txt");
-    if(file.open(QIODevice::ReadWrite | QFile::Append))
+    if (file.open(QFile::ReadWrite | QFile::Append))
     {
         file.write(message_in.toUtf8() + '\n');
     }
@@ -23,8 +27,96 @@ void Utils::log(const QString message)
     file.close();
 }
 
-bool Utils::checkConfigFile()
+bool Utils::checkConfigFile(QString filePath)
 {
-    QString file_path = filePath.isEmpty() ? QDir::currentPath() +  "/" + "config" : filePath;
+    QString file_path = filePath.isEmpty() ? QDir::currentPath() + "/" + "config" : filePath;
     return QFile::exists(file_path);
+}
+
+bool Utils::checkOptions(const int ac, char* av[])
+{
+    po::options_description desc("Welcome to streamServer.\nAllowed commands:\nwipe - clear all data;\nexit "
+                                 "- shutdown server.\nAllowed options:");
+    desc.add_options()("help",
+                       "help message")("address_port", po::value<std::string>(),
+                                       "set server address and port (default ports: 6000, 6001, 6002)")
+            ("folder", po::value<std::string>(), "set files folder path (default: /data/)")
+            ("log_file", po::value<std::string>(), "set log file name (default: logs.txt)")
+            ("login", po::value<std::string>(), "set login")
+            ("password", po::value<std::string>(), "set password");
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(ac, av, desc), vm);
+    po::notify(vm);
+
+    if (vm.count("help"))
+    {
+        std::cout << desc << std::endl;
+        return true;
+    }
+    if (vm.count("address_port"))
+    {
+        std::cout << "Server address was set to " << vm["address_port"].as<std::string>() << ".\n";
+    }
+    if (vm.count("folder"))
+    {
+        std::cout << "Server folder was set to " << vm["folder"].as<std::string>() << ".\n";
+    }
+    if (vm.count("log_file"))
+    {
+        std::cout << "Log file name was set to " << vm["log_file"].as<std::string>() << ".\n";
+    }
+    if (vm.count("login"))
+    {
+        std::cout << "Login was set to " << vm["folder"].as<std::string>() << ".\n";
+    }
+    if (vm.count("password"))
+    {
+        std::cout << "Password was set" << ".\n";
+    }
+
+    return false;
+}
+
+void Utils::wipe(QString path)
+{
+    if (path.isEmpty())
+    {
+        return;
+    }
+    QDir(path).removeRecursively();
+}
+
+void Utils::saveWhiteList(QStringList names, QString path)
+{
+    QString white("");
+    for (const auto& name : names)
+    {
+        white.append(name + "/");
+    }
+    white.chop(1);
+
+    QFile file(path + "whitelist");
+    if (file.open(QFile::ReadWrite))
+    {
+        file.resize(0);
+        file.write(white.toUtf8());
+    }
+    file.close();
+}
+
+void Utils::loadWhiteList(QStringList& names, QString path)
+{
+    QString data("");
+    QFile file(path + "whitelist");
+    if (file.open(QFile::ReadOnly))
+    {
+        data = file.readAll();
+    }
+    file.resize(0);
+    file.close();
+    if (!data.isEmpty())
+    {
+        names = data.split("/");
+    }
 }

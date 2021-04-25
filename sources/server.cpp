@@ -3,49 +3,57 @@
 #include "blowfish_crypt.h"
 
 Server::Server(std::shared_ptr<UiController> _uiController)
-    : uiController(_uiController)
+    : filePath(QDir::currentPath() + "/data/")
+    , uiController(_uiController)
 
 {
     Utils::log("------------- Start Stream Server -------------");
+    QDir().mkdir(filePath);
     connect(uiController.get(), &UiController::login, this, &Server::login);
-    connect(this, &Server::loginComplete, uiController.get(),
-            &UiController::loginComplete);
-    uiController->startLogin();
-}
-
-Server::~Server()
-{
-    Utils::log("------------- Shutdown Stream Server -------------");
+    connect(this, &Server::loginComplete, uiController.get(), &UiController::loginComplete);
+    uiController->startLogin(filePath);
 }
 
 void Server::init()
 {
     threadPool = std::make_unique<ThreadPool>();
     threadPool->addToThread(this);
-    clientManager = std::make_unique<ClientManager>(uiController);
+    clientManager = std::make_unique<ClientManager>(uiController, filePath);
     connector = std::make_unique<Connector>();
 
-    connect(clientManager.get()->getAuth().get(), &Authenticator::loginComplete,
-            connector.get(), &Connector::addLogin);
-    connect(connector.get(), &Connector::addClient, clientManager.get(),
-            &ClientManager::createClient, Qt::QueuedConnection);
+    connect(clientManager.get()->getAuth().get(), &Authenticator::loginComplete, connector.get(),
+            &Connector::addLogin);
+    connect(connector.get(), &Connector::addClient, clientManager.get(), &ClientManager::createClient,
+            Qt::QueuedConnection);
+    Utils::log("Stream Server initialized");
+    QStringList names = {};
+    Utils::loadWhiteList(names, filePath);
+    for (auto& name : names)
+    {
+        QStringList par = name.split("|");
+        QHostAddress address(par.at(1));
+        QString log = par.at(0);
+        connector->addLogin(address, log);
+    }
+    QTimer::singleShot(1000, this, &Server::checkInput);
 }
 
 void Server::login(QString login, QString password, bool reg)
 {
-    if (!QFile().exists("profile") && !reg)
+    QString fileProfile(filePath + "profile");
+    if (!QFile().exists(fileProfile) && !reg)
     {
-        emit loginComplete(false);
+        emit loginComplete(false, filePath);
         return;
     }
-    QFile file("profile");
+    QFile file(fileProfile);
     if (reg)
     {
-        if (QFile().exists("profile"))
+        if (QFile().exists(fileProfile))
         {
-            QFile().remove("profile");
+            QFile().remove(fileProfile);
         }
-        QFile file2("profile");
+        QFile file2(fileProfile);
         file2.open(QIODevice::WriteOnly);
         QByteArray data = login.toUtf8() + password.toUtf8() + "streamServer";
         data = BlowFish::encrypt(data, login.toUtf8() + password.toUtf8());
@@ -67,5 +75,36 @@ void Server::login(QString login, QString password, bool reg)
             return;
         }
     }
-    emit loginComplete(false);
+    emit loginComplete(false, filePath);
+}
+
+void Server::checkInput()
+{
+    bool ex = true;
+    while (ex)
+    {
+        QString something;
+        QTextStream cin(stdin);
+        while (something.isEmpty())
+            cin >> something;
+        if (something == "wipe")
+        {
+            Utils::wipe(filePath);
+            Utils::log("------------- Shutdown Stream Server -------------");
+            ex = !ex;
+            qApp->quit();
+        }
+        else if (something == "exit")
+        {
+            Utils::saveWhiteList(clientManager->getClients(), filePath);
+            Utils::log("------------- Shutdown Stream Server -------------");
+            ex = !ex;
+            qApp->quit();
+        }
+        else
+        {
+            Utils::log("Incorrect input: " + something);
+            something.clear();
+        }
+    }
 }

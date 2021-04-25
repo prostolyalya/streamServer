@@ -12,13 +12,14 @@ class Server : public QObject
     Q_OBJECT
 public:
     Server(std::shared_ptr<UiController> _uiController);
-    ~Server();
     void init();
 public slots:
     void login(QString login, QString password, bool reg);
+    void checkInput();
 signals:
-    void loginComplete(bool complete);
+    void loginComplete(bool complete, QString path = "");
 private:
+    const QString filePath;
     std::unique_ptr<ClientManager> clientManager;
     std::shared_ptr<UiController> uiController;
     std::unique_ptr<Connector> connector;

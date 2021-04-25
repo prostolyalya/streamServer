@@ -15,8 +15,10 @@ class ClientManager : public QObject
 {
     Q_OBJECT
 public:
-    ClientManager(std::shared_ptr<UiController> ui, QObject *parent = nullptr);
+    ClientManager(std::shared_ptr<UiController> ui, QString _path, QObject *parent = nullptr);
     std::shared_ptr<Authenticator> getAuth();
+
+    QStringList getClients();
 
 public slots:
     void clientDisconnected(QString login);
@@ -28,7 +30,7 @@ private:
     std::shared_ptr<Authenticator> auth;
     std::map<QString, std::unique_ptr<Client>> clients;
     std::shared_ptr<DBConnector> DB;
-
+    const QString path;
 signals:
     void sendMessageToAll(QString text);
 };

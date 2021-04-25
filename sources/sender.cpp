@@ -29,7 +29,7 @@ void Sender::setFile_path(const QString &value)
 void Sender::sendFile()
 {
     Utils::log("Sending file: " + file_path + ", to "
-                 + socket.peerAddress().toString());
+                 + socket.peerAddress().toString().left(7));
     QFile file(file_path);
     if (file.open(QFile::ReadOnly))
     {

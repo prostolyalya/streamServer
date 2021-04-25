@@ -12,12 +12,15 @@ namespace Utils
     };
 
     void log(const QString message);
-    bool checkConfigFile();
+    bool checkConfigFile(QString filePath);
     void readConfigFile();
     void saveConfig();
     void loadConfig();
-    static Utils::LogLevel logLevel = LogLevel::AVERAGE;
-    static QString filePath = "";
+    void wipe(QString path);
+    void setFilePath(QString path);
+    void saveWhiteList(QStringList names, QString path);
+    void loadWhiteList(QStringList& names, QString path);
+    bool checkOptions(const int ac, char *av[]);
 };
 
 #endif // utils_H

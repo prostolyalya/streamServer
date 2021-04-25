@@ -13,7 +13,7 @@ class Client : public QObject
     Q_OBJECT
 public:
     Client(QTcpSocket& _socket, QTcpSocket& _socketSender, QTcpSocket& _socketReceiver,
-           QString _login, QObject* parent = nullptr);
+           QString _login, QString path, QObject* parent = nullptr);
     ~Client();
 
     QString getLogin() const;
@@ -34,6 +34,7 @@ private:
 
 public:
     void connecting();
+    QHostAddress getAddress();
 public slots:
     void slotRead();
     void slotClientDisconnected();

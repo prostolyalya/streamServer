@@ -3,12 +3,12 @@
 #include "utils.h"
 
 Client::Client(QTcpSocket& _socket, QTcpSocket& _socketSender,
-               QTcpSocket& _socketReceiver, QString _login, QObject* parent)
+               QTcpSocket& _socketReceiver, QString _login, QString path, QObject* parent)
     : QObject(parent)
     , socket(_socket)
     , login(_login)
 {
-    current_path = Utils::filePath + login + "/";
+    current_path = path + login + "/";
     QDir().mkdir(current_path);
     connect(&socket, &QTcpSocket::readyRead, this, &Client::slotRead,
             Qt::QueuedConnection);
@@ -67,6 +67,7 @@ void Client::saveFile()
         sizeFile = 0;
     }
 }
+
 
 void Client::requestFileList(QStringList pubFiles)
 {
@@ -151,8 +152,12 @@ void Client::fileSent(qint64 size, QString fileName)
 
 void Client::sendFile(QString path)
 {
-    Utils::log("request file " + path + " " + login);
-    emit messageReceived("Request file: " + path.toUtf8());
+    Utils::log("Request file " + path + " " + login);
     sender.get()->setFile_path(path);
     emit sendFileSignal();
+}
+
+QHostAddress Client::getAddress()
+{
+    return socket.peerAddress();
 }

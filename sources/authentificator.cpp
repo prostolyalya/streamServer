@@ -37,7 +37,7 @@ void Authenticator::slotRead()
         QByteArray login = list.at(1);
         QByteArray pass = list.at(2);
         QString log_string = " " + login + " "
-            + socket->peerAddress().toString().right(7);
+            + socket->peerAddress().toString().right(3);
         if (list.at(0) == "login_user")
         {
             Utils::log("login_user" + log_string);

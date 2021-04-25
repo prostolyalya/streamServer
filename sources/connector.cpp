@@ -51,10 +51,12 @@ Connector::Connector(QObject* parent)
                 Utils::log(addr + " - Global address");
         }
     }
+
 }
 
 void Connector::slotNewConnectionClient()
 {
+    qDebug() << "slotNewConnectionClient";
     auto socket = serverClients->nextPendingConnection();
     socketsClient.insert(socket->peerAddress(), socket);
     checkClient();
@@ -62,6 +64,8 @@ void Connector::slotNewConnectionClient()
 
 void Connector::slotNewConnectionReceiver()
 {
+
+    qDebug() << "slotNewConnectionReceiver";
     auto socket = serverReceiver->nextPendingConnection();
     socketsSender.insert(socket->peerAddress(), socket);
     checkClient();
@@ -69,6 +73,8 @@ void Connector::slotNewConnectionReceiver()
 
 void Connector::slotNewConnectionSender()
 {
+
+    qDebug() << "slotNewConnectionSender";
     auto socket = serverSender->nextPendingConnection();
     socketsReceiver.insert(socket->peerAddress(), socket);
     checkClient();
@@ -77,6 +83,7 @@ void Connector::slotNewConnectionSender()
 void Connector::addLogin(QHostAddress ip, QString login)
 {
     logins.insert(ip, login);
+    checkClient();
 }
 
 void Connector::checkClient()
