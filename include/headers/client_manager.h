@@ -15,7 +15,7 @@ class ClientManager : public QObject
 {
     Q_OBJECT
 public:
-    ClientManager(std::shared_ptr<UiController> ui, QString _path, QObject *parent = nullptr);
+    ClientManager(std::shared_ptr<UiController> ui, QString _path, QString address, QObject *parent = nullptr);
     std::shared_ptr<Authenticator> getAuth();
 
     QStringList getClients();

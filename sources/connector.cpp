@@ -2,7 +2,7 @@
 #include "utils.h"
 #include <QCoreApplication>
 #include <set>
-Connector::Connector(QObject* parent)
+Connector::Connector(const QString address, QObject* parent)
     : QObject(parent)
 {
     serverClients = std::make_unique<QTcpServer>(this);
@@ -14,16 +14,23 @@ Connector::Connector(QObject* parent)
             &Connector::slotNewConnectionReceiver);
     connect(serverSender.get(), &QTcpServer::newConnection, this,
             &Connector::slotNewConnectionSender);
-
-    if (!serverClients->listen(QHostAddress::Any, 6000))
+    int port = 6000;
+    QHostAddress _address = QHostAddress::Any;
+    if (!address.isEmpty())
     {
-        Utils::log("serverClients is not started");
+        QStringList list = address.split(":");
+        _address = QHostAddress(list.at(0));
+        port = list.at(1).toInt();
+    }
+    if (!serverClients->listen(_address, port))
+    {
+        Utils::log("serverClients is not started: " + serverClients->errorString());
     }
     else
     {
-        Utils::log("serverClients is started");
+        Utils::log("serverClients is started " + serverClients->serverAddress().toString());
     }
-    if (!serverReceiver->listen(QHostAddress::Any, 6001))
+    if (!serverReceiver->listen(_address, port + 1))
     {
         Utils::log("serverReceiver is not started");
     }
@@ -31,7 +38,7 @@ Connector::Connector(QObject* parent)
     {
         Utils::log("serverReceiver is started");
     }
-    if (!serverSender->listen(QHostAddress::Any, 6002))
+    if (!serverSender->listen(_address, port + 2))
     {
         Utils::log("serverSender is not started");
     }

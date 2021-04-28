@@ -2,13 +2,13 @@
 #include "thread_pool.h"
 #include "utils.h"
 
-ClientManager::ClientManager(std::shared_ptr<UiController> ui, QString _path, QObject *parent)
+ClientManager::ClientManager(std::shared_ptr<UiController> ui, QString _path, QString address, QObject *parent)
     : QObject(parent)
     , uiController(ui)
     , path(_path)
 {
     DB = std::make_shared<DBConnector>(path + "clients", this);
-    auth = std::make_shared<Authenticator>(DB);
+    auth = std::make_shared<Authenticator>(DB, address);
 }
 
 void ClientManager::createClient(QTcpSocket *socketClient, QTcpSocket *socketSender,

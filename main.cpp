@@ -4,14 +4,15 @@
 
 int main(int argc, char *argv[])
 {
-    if (Utils::checkOptions(argc, argv))
+    Utils::startParameters param;
+    if (Utils::checkOptions(argc, argv, param))
     {
         return 0;
     }
     QCoreApplication app(argc, argv);
 
     auto uiController = std::make_shared<UiController>();
-    auto server = std::make_unique<Server>(uiController);
+    auto server = std::make_unique<Server>(uiController, param);
 
     return app.exec();
 }

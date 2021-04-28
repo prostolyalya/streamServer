@@ -10,7 +10,14 @@ namespace Utils
         AVERAGE,
         HIGH
     };
-
+    struct startParameters
+    {
+        QString login = "";
+        QString password = "";
+        QString address_port = "";
+        QString folder = "";
+        QString log_file = "";
+    };
     void log(const QString message);
     bool checkConfigFile(QString filePath);
     void readConfigFile();
@@ -20,7 +27,8 @@ namespace Utils
     void setFilePath(QString path);
     void saveWhiteList(QStringList names, QString path);
     void loadWhiteList(QStringList& names, QString path);
-    bool checkOptions(const int ac, char *av[]);
+    bool checkOptions(const int ac, char *av[], startParameters& param);
+    extern QString logFile;
 };
 
 #endif // utils_H

@@ -2,24 +2,46 @@
 #include "cryptor.h"
 #include "blowfish_crypt.h"
 
-Server::Server(std::shared_ptr<UiController> _uiController)
-    : filePath(QDir::currentPath() + "/data/")
+Server::Server(std::shared_ptr<UiController> _uiController, Utils::startParameters param)
+    : filePath(!param.folder.isEmpty() ? param.folder :QDir::currentPath() + "/data/")
+    , address(param.address_port)
     , uiController(_uiController)
 
 {
+    if (!param.log_file.isEmpty())
+    {
+        Utils::logFile = param.log_file;
+        Utils::log( "Log file name was set to " + param.log_file);
+    }
+    if (!param.address_port.isEmpty())
+    {
+        Utils::log("Server address was set to " + param.address_port);
+    }
+    if (!param.folder.isEmpty())
+    {
+        Utils::log("Server folder was set to " + param.folder);
+    }
+    if (!param.login.isEmpty())
+    {
+        Utils::log("Login was set to " + param.login);
+    }
+    if (!param.password.isEmpty())
+    {
+        Utils::log("Password was set");
+    }
     Utils::log("------------- Start Stream Server -------------");
     QDir().mkdir(filePath);
     connect(uiController.get(), &UiController::login, this, &Server::login);
     connect(this, &Server::loginComplete, uiController.get(), &UiController::loginComplete);
-    uiController->startLogin(filePath);
+    uiController->startLogin(filePath, param.login, param.password);
 }
 
 void Server::init()
 {
     threadPool = std::make_unique<ThreadPool>();
     threadPool->addToThread(this);
-    clientManager = std::make_unique<ClientManager>(uiController, filePath);
-    connector = std::make_unique<Connector>();
+    clientManager = std::make_unique<ClientManager>(uiController, filePath, address);
+    connector = std::make_unique<Connector>(address);
 
     connect(clientManager.get()->getAuth().get(), &Authenticator::loginComplete, connector.get(),
             &Connector::addLogin);

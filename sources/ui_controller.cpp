@@ -3,6 +3,8 @@
 #include <string>
 #include <stdio.h>
 #include <QFile>
+#include <curses.h>
+#include <unistd.h>
 #include "utils.h"
 
 UiController::UiController(QObject *parent)
@@ -32,7 +34,7 @@ void UiController::loginComplete(bool complete, QString path)
     }
 }
 
-void UiController::startLogin(QString path)
+void UiController::startLogin(QString path, QString _login, QString _password)
 {
     bool reg = !QFile::exists(path + "profile");
     if(reg)
@@ -45,12 +47,25 @@ void UiController::startLogin(QString path)
     }
 
     std::string log, pass;
+    if (!_login.isEmpty())
+    {
+        Utils::log("Login: " + _login);
+        log = _login.toStdString();
+    }
+    else
+    {
+        Utils::log("Login:");
+        std::cin >> log;
+    }
+    if (!_password.isEmpty())
+    {
+        pass = _password.toStdString();
+    }
+    else
+    {
+        pass = getpass("Password:");
+    }
 
-    Utils::log("Login:");
-    std::cin >> log;
-    Utils::log(log.c_str());
-    Utils::log("Password:");
-    std::cin >> pass;
-    Utils::log(pass.c_str());
+    Utils::log("Password: " + QString (10, '*'));
     emit login(log.c_str(), pass.c_str(), reg);
 }

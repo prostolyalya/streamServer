@@ -10,7 +10,7 @@ class UiController : public QObject
 public:
     UiController(QObject* parent = nullptr);
     ~UiController();
-    void startLogin(QString path);
+    void startLogin(QString path, QString _login = "", QString _password = "");
 signals:
     void login(QString login, QString pass, bool reg);
 public slots:

@@ -10,7 +10,7 @@ class Authenticator : public QObject
 {
     Q_OBJECT
 public:
-    explicit Authenticator(std::shared_ptr<DBConnector> dbase, QObject *parent = 0);
+    explicit Authenticator(std::shared_ptr<DBConnector> dbase, QString address, QObject *parent = 0);
 
 public slots:
     void slotNewConnection();

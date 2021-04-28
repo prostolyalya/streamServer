@@ -55,6 +55,7 @@ set(HDRS_LIST
 )
 
 find_package(QT NAMES Qt5 COMPONENTS Core Network Quick Sql REQUIRED)
+set(BOOST_ROOT "/home/ykulevskyi/boost/include")
 find_package(Boost COMPONENTS program_options system REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Quick Sql REQUIRED)
 #find_package(Qt5 COMPONENTS Core Network Quick Sql REQUIRED)

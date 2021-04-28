@@ -10,7 +10,7 @@ class Connector : public QObject
 {
     Q_OBJECT
 public:
-    explicit Connector(QObject *parent = 0);
+    explicit Connector(const QString address ,QObject *parent = 0);
     std::unique_ptr<QTcpServer> serverClients;
     std::unique_ptr<QTcpServer> serverReceiver;
     std::unique_ptr<QTcpServer> serverSender;

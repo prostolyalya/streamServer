@@ -8,6 +8,10 @@
 
 namespace po = boost::program_options;
 
+namespace Utils {
+    QString logFile = "logs.txt";
+}
+
 void Utils::log(const QString message)
 {
     const auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -15,7 +19,7 @@ void Utils::log(const QString message)
     time_in.chop(6);
     QString message_in = "[" + time_in + "] " + message;
     std::cout << message_in.toStdString() << std::endl;
-    QFile file("logs.txt");
+    QFile file(logFile);
     if (file.open(QFile::ReadWrite | QFile::Append))
     {
         file.write(message_in.toUtf8() + '\n');
@@ -33,17 +37,17 @@ bool Utils::checkConfigFile(QString filePath)
     return QFile::exists(file_path);
 }
 
-bool Utils::checkOptions(const int ac, char* av[])
+bool Utils::checkOptions(const int ac, char* av[], startParameters &param)
 {
     po::options_description desc("Welcome to streamServer.\nAllowed commands:\nwipe - clear all data;\nexit "
                                  "- shutdown server.\nAllowed options:");
     desc.add_options()("help",
                        "help message")("address_port", po::value<std::string>(),
-                                       "set server address and port (default ports: 6000, 6001, 6002)")
-            ("folder", po::value<std::string>(), "set files folder path (default: /data/)")
-            ("log_file", po::value<std::string>(), "set log file name (default: logs.txt)")
-            ("login", po::value<std::string>(), "set login")
-            ("password", po::value<std::string>(), "set password");
+                                       "server address and port (default ports: 6000, 6001, 6002)")
+            ("folder", po::value<std::string>(), "files folder path (default: /data/)")
+            ("log_file", po::value<std::string>(), "log file name (default: logs.txt)")
+            ("login", po::value<std::string>(), "login")
+            ("password", po::value<std::string>(), "password");
 
     po::variables_map vm;
     po::store(po::parse_command_line(ac, av, desc), vm);
@@ -56,23 +60,25 @@ bool Utils::checkOptions(const int ac, char* av[])
     }
     if (vm.count("address_port"))
     {
-        std::cout << "Server address was set to " << vm["address_port"].as<std::string>() << ".\n";
+        param.address_port = vm["address_port"].as<std::string>().c_str();
     }
     if (vm.count("folder"))
     {
-        std::cout << "Server folder was set to " << vm["folder"].as<std::string>() << ".\n";
+        param.folder = vm["folder"].as<std::string>().c_str();
+        if (!param.folder.endsWith("/"))
+            param.folder.append("/");
     }
     if (vm.count("log_file"))
     {
-        std::cout << "Log file name was set to " << vm["log_file"].as<std::string>() << ".\n";
+        param.log_file = vm["log_file"].as<std::string>().c_str();
     }
     if (vm.count("login"))
     {
-        std::cout << "Login was set to " << vm["folder"].as<std::string>() << ".\n";
+        param.login = vm["login"].as<std::string>().c_str();
     }
     if (vm.count("password"))
     {
-        std::cout << "Password was set" << ".\n";
+        param.password = vm["password"].as<std::string>().c_str();
     }
 
     return false;

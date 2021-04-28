@@ -1,13 +1,21 @@
 #include "authentificator.h"
 #include "utils.h"
-Authenticator::Authenticator(std::shared_ptr<DBConnector> dbase, QObject *parent)
+Authenticator::Authenticator(std::shared_ptr<DBConnector> dbase, QString address, QObject *parent)
     : QObject(parent)
     , db(dbase)
 {
     serverAuth = std::make_unique<QTcpServer>(this);
     connect(serverAuth.get(), &QTcpServer::newConnection, this,
             &Authenticator::slotNewConnection);
-    if (!serverAuth->listen(QHostAddress::Any, 6003))
+    int port = 6003;
+    QHostAddress _address = QHostAddress::Any;
+    if (!address.isEmpty())
+    {
+        QStringList list = address.split(":");
+        _address = QHostAddress(list.at(0));
+        port = list.at(1).toInt();
+    }
+    if (!serverAuth->listen(_address, port + 3))
     {
         Utils::log("serverAuth is not started");
     }
