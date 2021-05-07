@@ -17,14 +17,8 @@ namespace Utils
         QString address_port = "";
         QString folder = "";
         QString log_file = "";
-        QByteArray serialize()
-        {
-
-        }
-        bool deserialize(QByteArray data)
-        {
-
-        }
+        QByteArray serialize();
+        bool deserialize(QString data);
     };
     void log(const QString message);
     bool checkConfigFile(QString filePath);

@@ -15,13 +15,14 @@ Authenticator::Authenticator(std::shared_ptr<DBConnector> dbase, QString address
         _address = QHostAddress(list.at(0));
         port = list.at(1).toInt();
     }
+    Utils::log("server address is " + _address.toString());
     if (!serverAuth->listen(_address, port + 3))
     {
         Utils::log("serverAuth is not started");
     }
     else
     {
-        Utils::log("serverAuth is started");
+        Utils::log("serverAuth is started: " + QString::number(port + 3));
     }
 }
 
