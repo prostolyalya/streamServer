@@ -17,12 +17,19 @@ namespace Utils
         QString address_port = "";
         QString folder = "";
         QString log_file = "";
+        QByteArray serialize()
+        {
+
+        }
+        bool deserialize(QByteArray data)
+        {
+
+        }
     };
     void log(const QString message);
     bool checkConfigFile(QString filePath);
-    void readConfigFile();
-    void saveConfig();
-    void loadConfig();
+    void saveConfig(startParameters& param);
+    bool loadConfig(startParameters& param);
     void wipe(QString path);
     void setFilePath(QString path);
     void saveWhiteList(QStringList names, QString path);
