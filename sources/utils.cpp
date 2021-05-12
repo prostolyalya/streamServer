@@ -6,8 +6,6 @@
 
 #include <boost/program_options.hpp>
 
-
-
 namespace Utils {
 QString logFile = "logs.txt";
 
@@ -236,5 +234,30 @@ bool startParameters::deserialize(QString data)
     return true;
 }
 
+QString serialize(QStringList data)
+{
+    QString res = "";
+    for(const auto& tmp : data)
+    {
+        if (tmp == "." || tmp == "..")
+            continue;
+        res += QString::number(tmp.size()) + "/" + tmp;
+    }
+    return res;
+}
+
+QStringList deserialize(QString data)
+{
+    QStringList list;
+    while(!data.isEmpty())
+    {
+        int pos = data.indexOf("/");
+        int size = data.midRef(0, pos).toInt();
+        QString name = data.mid(pos + 1, size);
+        list.append(name);
+        data.remove(0, pos + size);
+    }
+    return list;
+}
 
 }

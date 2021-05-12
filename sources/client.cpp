@@ -74,23 +74,8 @@ void Client::requestFileList(QStringList pubFiles)
     Utils::log("request file list " + login);
     QDir dir(current_path);
     QStringList list = dir.entryList();
-    QByteArray data = "response_list_file&";
-    for (auto& name : list)
-    {
-        if (name == "." || name == "..")
-            continue;
-        data += "/" + name.toUtf8();
-    }
-    if (!pubFiles.isEmpty())
-    {
-        data.append("&");
-        for (auto& name : pubFiles)
-        {
-            if (name == "." || name == "..")
-                continue;
-            data += "//" + name.toUtf8();
-        }
-    }
+    QByteArray data = "response_list_file//" + Utils::serialize(list).toUtf8() + "//" + Utils::serialize(pubFiles).toUtf8();
+
     socket.write(data);
 }
 

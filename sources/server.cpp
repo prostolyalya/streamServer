@@ -38,8 +38,6 @@ Server::Server(std::shared_ptr<UiController> _uiController, Utils::startParamete
 
 void Server::init()
 {
-    threadPool = std::make_unique<ThreadPool>();
-    threadPool->addToThread(this);
     clientManager = std::make_unique<ClientManager>(uiController, filePath, address);
     connector = std::make_unique<Connector>(address);
 
@@ -57,6 +55,7 @@ void Server::init()
         QString log = par.at(0);
         connector->addLogin(address, log);
     }
+    ThreadPool::getInstance()->addToThread(this);
     QTimer::singleShot(1000, this, &Server::checkInput);
 }
 

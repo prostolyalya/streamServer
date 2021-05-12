@@ -24,7 +24,6 @@ private:
     std::unique_ptr<ClientManager> clientManager;
     std::shared_ptr<UiController> uiController;
     std::unique_ptr<Connector> connector;
-    std::unique_ptr<ThreadPool> threadPool;
 };
 
 #endif // SERVER_H
