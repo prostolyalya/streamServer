@@ -1,5 +1,6 @@
 #ifndef utils_H
 #define utils_H
+#include <QByteArrayList>
 #include <QString>
 
 namespace Utils
@@ -17,14 +18,8 @@ namespace Utils
         QString address_port = "";
         QString folder = "";
         QString log_file = "";
-        QByteArray serialize()
-        {
-
-        }
-        bool deserialize(QByteArray data)
-        {
-
-        }
+        QByteArray serialize();
+        bool deserialize(QString data);
     };
     void log(const QString message);
     bool checkConfigFile(QString filePath);
@@ -35,6 +30,8 @@ namespace Utils
     void saveWhiteList(QStringList names, QString path);
     void loadWhiteList(QStringList& names, QString path);
     bool checkOptions(const int ac, char *av[], startParameters& param);
+    QString serialize(QStringList data);
+    QStringList deserialize(QString data);
     extern QString logFile;
 };
 

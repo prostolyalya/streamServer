@@ -28,15 +28,15 @@ Connector::Connector(const QString address, QObject* parent)
     }
     else
     {
-        Utils::log("serverClients is started " + serverClients->serverAddress().toString());
+        Utils::log("serverClients is started " + QString::number(port));
     }
     if (!serverReceiver->listen(_address, port + 1))
     {
-        Utils::log("serverReceiver is not started");
+        Utils::log("serverReceiver is not started" );
     }
     else
     {
-        Utils::log("serverReceiver is started");
+        Utils::log("serverReceiver is started: "+ QString::number(port + 1));
     }
     if (!serverSender->listen(_address, port + 2))
     {
@@ -44,7 +44,7 @@ Connector::Connector(const QString address, QObject* parent)
     }
     else
     {
-        Utils::log("serverSender is started");
+        Utils::log("serverSender is started: " + QString::number(port + 2));
     }
     const QHostAddress& localhost = QHostAddress(QHostAddress::LocalHost);
     for (const QHostAddress& address : QNetworkInterface::allAddresses())

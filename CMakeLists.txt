@@ -1,16 +1,15 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 project(streamServer LANGUAGES CXX)
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
+#if(NOT CMAKE_BUILD_TYPE)
+#  set(CMAKE_BUILD_TYPE Release)
+#endif()
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+#set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+#set(CMAKE_CXX_FLAGS_DEBUG "-g")
+#set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-#set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
@@ -32,7 +31,6 @@ set(SRC_LIST
     "sources/ui_controller.cpp"
     "sources/db_connector.cpp"
     "sources/cryptor.cpp"
-    "sources/serializer.cpp"
     "sources/authentificator.cpp"
     "sources/blowfish_crypt.cpp"
     "sources/utils.cpp"
@@ -48,17 +46,15 @@ set(HDRS_LIST
     "include/headers/ui_controller.h"
     "include/headers/db_connector.h"
     "include/headers/cryptor.h"
-    "include/headers/serializer.h"
     "include/headers/authentificator.h"
     "include/headers/blowfish_crypt.h"
     "include/headers/utils.h"
 )
 
 find_package(QT NAMES Qt5 COMPONENTS Core Network Quick Sql REQUIRED)
-set(BOOST_ROOT "/home/ykulevskyi/boost/include")
+
 find_package(Boost COMPONENTS program_options system REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Quick Sql REQUIRED)
-#find_package(Qt5 COMPONENTS Core Network Quick Sql REQUIRED)
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 add_executable(streamServer
